@@ -10,6 +10,13 @@ from sqlalchemy import text
 client = TestClient(app)
 
 
+@pytest.fixture(autouse=True, scope="session")
+def create_all_tables():
+    from sqlmodel import SQLModel
+
+    SQLModel.metadata.create_all(engine)
+
+
 @pytest.fixture(autouse=True)
 def setup_db():
     # Vor jedem Test: DB leeren
