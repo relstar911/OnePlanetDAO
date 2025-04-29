@@ -1,22 +1,30 @@
-from fastapi import APIRouter, Depends, Request
-from ..schemas.identity import ProofRequest, ProofResponse, AppealRequest, AppealResponse
-from ..schemas.identity import LoginRequest
-from ..core.db import get_session
-from ..core.models import ProofRequest as ProofRequestModel
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlmodel import Session, select
 from typing import List
 import json
+from ..core.auth import create_access_token, require_auth
+from ..core.db import get_session
+from ..core.limiter import limiter
+from ..core.models import ProofRequest as ProofRequestModel
+from ..schemas.identity import (
+    AppealRequest,
+    AppealResponse,
+    LoginRequest,
+    ProofRequest,
+    ProofResponse,
+)
 
 router = APIRouter()
 
-from fastapi import HTTPException, status
-
-from oneplanet_backend.core.limiter import limiter
-from oneplanet_backend.core.auth import create_access_token, require_auth
 
 @router.post("/proof-request", response_model=ProofResponse)
 @limiter.limit("10/minute")
-def proof_request(req: ProofRequest, request: Request, session: Session = Depends(get_session), user=Depends(require_auth)):
+def proof_request(
+    req: ProofRequest,
+    request: Request,
+    session: Session = Depends(get_session),
+    user=Depends(require_auth),
+):
     """
     Process proof request for onboarding, recovery, voting.
     Validierung:
@@ -26,25 +34,46 @@ def proof_request(req: ProofRequest, request: Request, session: Session = Depend
     - external_nullifier: nicht leer, String
     """
     ALLOWED_PROOF_TYPES = {"onboarding", "recovery", "voting"}
-    if not req.user_id or not req.proof_type or req.public_signals is None or not req.external_nullifier:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Alle Felder (user_id, proof_type, public_signals, external_nullifier) müssen gesetzt sein.")
+    if (
+        not req.user_id
+        or not req.proof_type
+        or req.public_signals is None
+        or not req.external_nullifier
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                "Alle Felder (user_id, proof_type, public_signals, "
+                "external_nullifier) müssen gesetzt sein."
+            ),
+        )
     if req.proof_type not in ALLOWED_PROOF_TYPES:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"proof_type muss einer der erlaubten Werte sein: {ALLOWED_PROOF_TYPES}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(f"proof_type muss einer der erlaubten Werte sein: {ALLOWED_PROOF_TYPES}"),
+        )
     if not isinstance(req.public_signals, list) or not req.public_signals:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="public_signals muss eine nicht-leere Liste sein.")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="public_signals muss eine nicht-leere Liste sein.",
+        )
     if not isinstance(req.external_nullifier, str) or not req.external_nullifier.strip():
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="external_nullifier darf nicht leer sein und muss ein String sein.")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="external_nullifier darf nicht leer sein und muss ein String sein.",
+        )
 
     db_proof = ProofRequestModel(
         user_id=req.user_id,
         proof_type=req.proof_type,
         public_signals=json.dumps(req.public_signals),
-        external_nullifier=req.external_nullifier
+        external_nullifier=req.external_nullifier,
     )
     session.add(db_proof)
     session.commit()
     session.refresh(db_proof)
     return ProofResponse(proof="<zk-proof-object>", status="success")
+
 
 @router.get("/proof-requests", response_model=List[ProofRequest])
 def list_proof_requests(session: Session = Depends(get_session)):
@@ -54,9 +83,11 @@ def list_proof_requests(session: Session = Depends(get_session)):
             user_id=p.user_id,
             proof_type=p.proof_type,
             public_signals=json.loads(p.public_signals),
-            external_nullifier=p.external_nullifier
-        ) for p in proofs
+            external_nullifier=p.external_nullifier,
+        )
+        for p in proofs
     ]
+
 
 @router.post("/appeal", response_model=AppealResponse)
 @limiter.limit("10/minute")
@@ -64,8 +95,10 @@ def appeal(req: AppealRequest, request: Request, user=Depends(require_auth)):
     """Process appeal request."""
     # Dummy case_id generieren (z.B. user_id + Zeitstempel)
     import time
+
     case_id = f"{req.user_id}-{int(time.time())}"
     return AppealResponse(status="pending", case_id=case_id)
+
 
 @router.post("/login")
 def login(data: LoginRequest):

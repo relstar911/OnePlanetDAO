@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class KPIResponse(BaseModel):
     region: str
     onRampSuccess: int

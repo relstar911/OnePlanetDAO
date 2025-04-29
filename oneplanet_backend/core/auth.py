@@ -13,12 +13,14 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 security = HTTPBearer()
 
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 def verify_token(token: str):
     try:
@@ -31,10 +33,12 @@ def verify_token(token: str):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     payload = verify_token(token)
     return payload
+
 
 def require_auth(request: Request, credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials

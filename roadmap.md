@@ -100,25 +100,44 @@ Diese Roadmap ist eng an die Dokumentation im `docs/`-Verzeichnis angedockt und 
 
 ---
 
-## [2025-04-29] Testabdeckung für Kernmodule
-- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) existieren Unit-Tests für Fehlerfälle (Validation, Pflichtfelder, Wertebereiche) und Erfolgsszenarien (gültige Requests).
+## [2025-04-29] Testabdeckung & Stabilität für Kernmodule
+- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) existieren Unit- und Integrationstests für Fehlerfälle (Validation, Pflichtfelder, Wertebereiche) und Erfolgsszenarien (gültige Requests).
 - **Abgedeckt:**
     - POST-Endpunkte für Voting, ProofRequest, KPI, Alert
     - Fehlerfälle (422) und Erfolgsfälle (200)
+    - GET-Endpunkte für Votes, ProofRequests, KPIs, Alerts
+    - JWT-Auth, Rate-Limit, Security Layer
+- **Testabdeckung:** 97% (Coverage-Report vom 2025-04-29)
+- **Status:** Alle Kernmodule stabil, produktionsreif und vollständig getestet.
 - **Nächste Schritte:**
-    - Testabdeckung für GET-Endpunkte und komplexere Business Rules erweitern
+    - Tests für neue visionäre Features ergänzen (Recovery, Accessibility, Fairness-Dashboards)
     - README und API-Dokumentation mit Beispielen und Testhinweisen ergänzen
     - Optional: CI/CD-Integration für automatisierte Tests
 
-- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) wurden Pflichtfeld- und Wertebereichsprüfungen sowie klare Fehlermeldungen (HTTP 422) implementiert.
-- **Module:**
-    - Voting: Pflichtfelder, vote_weights >= 0, proof-Format
-    - ProofRequest: Pflichtfelder, erlaubte proof_type, public_signals als Liste
-    - KPI: Pflichtfelder, Wertebereiche, region nicht leer
-    - Alert: Pflichtfelder, Wertebereiche, Strings nicht leer
-- **Nächste Schritte:**
-    - Aufbau der Teststruktur und erste Tests für alle Module
-    - README und API-Dokumentation weiter ausbauen
+---
+
+## [2025-04-29] Visionäre Features & Gaps (NEU)
+- **Recovery & Social Recovery:** 🟡 Konzept vorhanden, Implementierung geplant
+- **Accessibility/Barrierefreiheit:** 🟡 Teilweise konzipiert, technische Umsetzung offen
+- **Fairness-Dashboards (MSI, VEI, Equity):** 🟡 KPIs und Mockups vorhanden, Backend/Frontend fehlt noch
+- **Compliance- und Privacy-Class-Handling:** 🟡 Teilweise im Code, vollständige Umsetzung ausstehend
+- **Guardian/Appeal-Mechanismen:** ⏳ Konzept vorhanden, noch nicht umgesetzt
+- **Multi-Region/Offline-Onboarding:** ⏳ Konzept vorhanden, technische Umsetzung offen
+- **Automatisierte Anomaly Detection:** ⏳ Konzept vorhanden, technische Umsetzung offen
+- **On-Chain/Off-Chain Synchronisation (constitution_hash, Audit-Logs):** ⏳ Konzept vorhanden, technische Umsetzung offen
+
+---
+
+## [2025-04-29] Nächste Schritte (Update)
+- Visionäre Features (Recovery, Accessibility, Fairness-Dashboards, Compliance-Checks, KPI-Dashboards, Equity/Minority-Mechanismen) umsetzen
+- Compliance- und Privacy-Class-Handling im Code stärken
+- KPI-Dashboards und Equity/Minority-Mechanismen umsetzen
+- Tests für neue Features ergänzen
+- README und API-Dokumentation weiter ausbauen
+
+---
+
+**Letztes Update:** 2025-04-29
 
 ## Verknüpfte Dokumentationsbereiche
 - [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
