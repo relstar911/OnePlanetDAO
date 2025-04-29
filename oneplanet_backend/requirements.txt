@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+sqlmodel
+pytest
+slowapi
+python-jose
+python-multipart

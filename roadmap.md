@@ -52,13 +52,29 @@ Diese Roadmap ist eng an die Dokumentation im `docs/`-Verzeichnis angedockt und 
 
 ---
 
-## [2025-04-29] Persistente KPI-API
-- **Status:** Die KPI-Endpunkte `/api/reporting/kpis` erlauben jetzt das Anlegen und Listen von KPIs in der Datenbank. Optional kann nach Region gefiltert werden.
-- **Doku-Referenz:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
+## [2025-04-29] Security Hardening & Rate Limiting
+- **Status:**
+    - Rate Limiting (SlowAPI) für alle kritischen POST-Endpunkte (Vote, ProofRequest, Alert, Appeal) implementiert (10 req/min pro IP).
+    - Fehlerausgaben sind konsistent und im JSON-Format.
+    - Limiter-Objekt zentralisiert in `core/limiter.py`, Import-Refaktorierung abgeschlossen (keine Circular Imports mehr).
+    - API-Doku und OpenAPI-UI spiegeln die Änderungen wider.
 - **Nächste Schritte:**
-    - Persistenz für Alerts.
-    - Validierung und Auswertungslogik für KPIs.
-    - Dokumentation und Tracking nach jedem Modul-Update.
+    - JWT-Authentifizierung für geschützte Endpunkte.
+    - Linting und Code-Qualitätschecks (flake8, black).
+    - Ausbau der Testabdeckung (Unit/Integration, Rate-Limit, Fehlerfälle).
+    - Deployment-Vorbereitung (Settings, Logging, HTTPS).
+
+---
+
+## [2025-04-29] JWT Auth & Security-Testing
+- **Status:**
+    - JWT-Authentifizierung für alle sensiblen POST-Endpunkte implementiert (Login, Token, Bearer-Auth).
+    - Automatisierte Tests für Auth-Flow, Rate Limiting, Fehlerausgaben und alle Kernfunktionen erfolgreich durchgeführt.
+    - ProofRequest, Appeal, Vote, Alert: alle Endpunkte produktionsreif und gegen Missbrauch geschützt.
+- **Nächste Schritte:**
+    - Linting und Code-Qualitätschecks (flake8, black).
+    - Testabdeckung weiter ausbauen.
+    - Deployment-Vorbereitung und Security-Hardening.
 
 ---
 

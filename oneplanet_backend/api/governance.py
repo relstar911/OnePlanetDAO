@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from ..schemas.governance import VoteRequest, VoteResponse
 from ..core.db import get_session
 from ..core.models import Vote
@@ -10,8 +10,12 @@ router = APIRouter()
 
 from fastapi import HTTPException, status
 
+from oneplanet_backend.core.limiter import limiter
+from oneplanet_backend.core.auth import require_auth
+
 @router.post("/vote", response_model=VoteResponse)
-def submit_vote(vote: VoteRequest, session: Session = Depends(get_session)):
+@limiter.limit("10/minute")
+def submit_vote(vote: VoteRequest, request: Request, session: Session = Depends(get_session), user=Depends(require_auth)):
     """
     Submit a quadratic vote (see System Blueprint/API Spec).
     Validierung:

@@ -19,3 +19,7 @@ class AppealRequest(BaseModel):
 class AppealResponse(BaseModel):
     status: str
     case_id: str
+
+class LoginRequest(BaseModel):
+    user_id: str
+    password: str = ""  # Für späteres echtes Login, aktuell Dummy

@@ -58,6 +58,39 @@ This file documents every significant update to the One Planet project architect
 
 ---
 
+## [2025-04-29] Security Hardening & Rate Limiting
+- **Action:**
+    - Implementierung von Rate Limiting (SlowAPI) für alle sicherheitsrelevanten POST-Endpunkte (`/api/governance/vote`, `/api/identity/proof-request`, `/api/tokenomics/alerts`, `/api/identity/appeal`).
+    - Fehlerausgaben für Rate Limit und Validierungsfehler werden jetzt konsistent als JSON ausgegeben.
+    - Refaktorierung: Limiter-Objekt zentral in `core/limiter.py`, Import-Probleme (circular imports) gelöst.
+    - Automatisierte Tests für Rate Limiting und Fehlerausgaben durchgeführt.
+    - Roadmap und Tracking auf aktuellen Stand gebracht (siehe `roadmap.md`).
+- **Status:**
+    - Security Layer (Rate Limiting, Fehlerbehandlung) ist produktionsreif.
+    - API-Dokumentation und OpenAPI-UI spiegeln die Änderungen wider.
+- **Next:**
+    - JWT-Authentifizierung für geschützte Endpunkte.
+    - Linting und Code-Qualitätschecks (flake8, black).
+    - Ausbau der Testabdeckung (Unit/Integration, Rate-Limit, Fehlerfälle).
+    - Deployment-Vorbereitung (Settings, Logging, HTTPS).
+
+---
+
+## [2025-04-29] JWT Auth & Security-Testing
+- **Action:**
+    - JWT-Authentifizierung für alle sensiblen POST-Endpunkte implementiert (Login, Token, Bearer-Auth).
+    - Automatisierte Tests für Auth-Flow, Rate Limiting, Fehlerausgaben und alle Kernfunktionen erfolgreich durchgeführt.
+    - ProofRequest, Appeal, Vote, Alert: alle Endpunkte produktionsreif und gegen Missbrauch geschützt.
+- **Status:**
+    - Security Layer (JWT, Auth, Limiting, Fehlerbehandlung) ist produktionsreif.
+    - API-Dokumentation und OpenAPI-UI spiegeln die Änderungen wider.
+- **Next:**
+    - Linting und Code-Qualitätschecks (flake8, black).
+    - Testabdeckung weiter ausbauen.
+    - Deployment-Vorbereitung und Security-Hardening.
+
+---
+
 ## [2025-04-29] Persistenz-Kernmodule abgeschlossen
 - **Action:** Alle Kernmodule (Voting, ProofRequest, KPI, Alert) sind jetzt persistent, produktionsreif und dokumentiert.
 - **Nächster Meilenstein:**

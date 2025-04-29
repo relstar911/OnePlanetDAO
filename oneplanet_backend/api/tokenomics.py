@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from ..schemas.tokenomics import AlertResponse
 from ..core.db import get_session
 from ..core.models import Alert
@@ -9,8 +9,12 @@ router = APIRouter()
 
 from fastapi import HTTPException, status
 
+from oneplanet_backend.core.limiter import limiter
+from oneplanet_backend.core.auth import require_auth
+
 @router.post("/alerts", response_model=AlertResponse)
-def create_alert(alert: AlertResponse, session: Session = Depends(get_session)):
+@limiter.limit("10/minute")
+def create_alert(alert: AlertResponse, request: Request, session: Session = Depends(get_session), user=Depends(require_auth)):
     """
     Alert-Validierung:
     - Pflichtfelder: epoch, msi, vei, collusion, status, alert

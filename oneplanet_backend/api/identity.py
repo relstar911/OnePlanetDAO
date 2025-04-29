@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from ..schemas.identity import ProofRequest, ProofResponse, AppealRequest, AppealResponse
+from ..schemas.identity import LoginRequest
 from ..core.db import get_session
 from ..core.models import ProofRequest as ProofRequestModel
 from sqlmodel import Session, select
@@ -10,8 +11,12 @@ router = APIRouter()
 
 from fastapi import HTTPException, status
 
+from oneplanet_backend.core.limiter import limiter
+from oneplanet_backend.core.auth import create_access_token, require_auth
+
 @router.post("/proof-request", response_model=ProofResponse)
-def proof_request(req: ProofRequest, session: Session = Depends(get_session)):
+@limiter.limit("10/minute")
+def proof_request(req: ProofRequest, request: Request, session: Session = Depends(get_session), user=Depends(require_auth)):
     """
     Process proof request for onboarding, recovery, voting.
     Validierung:
@@ -54,6 +59,18 @@ def list_proof_requests(session: Session = Depends(get_session)):
     ]
 
 @router.post("/appeal", response_model=AppealResponse)
-def appeal(req: AppealRequest):
+@limiter.limit("10/minute")
+def appeal(req: AppealRequest, request: Request, user=Depends(require_auth)):
     """Process appeal request."""
-    return AppealResponse(status="pending", message="Appeal received.")
+    # Dummy case_id generieren (z.B. user_id + Zeitstempel)
+    import time
+    case_id = f"{req.user_id}-{int(time.time())}"
+    return AppealResponse(status="pending", case_id=case_id)
+
+@router.post("/login")
+def login(data: LoginRequest):
+    user_id = data.user_id
+    if not user_id:
+        raise HTTPException(status_code=400, detail="user_id required")
+    access_token = create_access_token({"user_id": user_id})
+    return {"access_token": access_token, "token_type": "bearer"}
