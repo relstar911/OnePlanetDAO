@@ -1,13 +1,16 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
+from .privacy import privacy_class, PrivacyClass
 
 
+@privacy_class(PrivacyClass.REDACTED)
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: str
     region: str
 
 
+@privacy_class(PrivacyClass.PUBLIC)
 class Proposal(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     proposal_id: str
@@ -15,6 +18,7 @@ class Proposal(SQLModel, table=True):
     description: str
 
 
+@privacy_class(PrivacyClass.MEMBER_ONLY)
 class Vote(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: str
@@ -23,6 +27,7 @@ class Vote(SQLModel, table=True):
     proof: str
 
 
+@privacy_class(PrivacyClass.MEMBER_ONLY)
 class ProofRequest(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: str
@@ -31,6 +36,7 @@ class ProofRequest(SQLModel, table=True):
     external_nullifier: str
 
 
+@privacy_class(PrivacyClass.PUBLIC)
 class Alert(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     epoch: int
@@ -41,6 +47,7 @@ class Alert(SQLModel, table=True):
     alert: str
 
 
+@privacy_class(PrivacyClass.PUBLIC)
 class KPI(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     region: str

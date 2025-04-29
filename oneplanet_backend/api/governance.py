@@ -3,7 +3,8 @@ from sqlmodel import Session, select
 from ..core.auth import require_auth
 from ..core.db import get_session
 from ..schemas.governance import VoteRequest, VoteResponse
-from ..core.models import Vote
+from ..core.models import Vote, PrivacyClass
+from ..core.privacy import audit_log_access
 from oneplanet_backend.core.limiter import limiter
 import json
 from typing import List
@@ -26,6 +27,16 @@ def submit_vote(
     - Wertebereiche: vote_weights >= 0
     - proof darf nicht leer sein
     """
+    # Audit log: access to sensitive vote submission
+    audit_log_access(
+        user_id=vote.user_id,
+        model="Vote",
+        model_id=vote.proposal_id,
+        action="POST /vote",
+        privacy_class=PrivacyClass.MEMBER_ONLY,
+        reason="Vote submitted",
+        session=session,
+    )
     # Pflichtfeld-Validierung
     if not vote.user_id or not vote.proposal_id or not vote.vote_weights or not vote.proof:
         raise HTTPException(

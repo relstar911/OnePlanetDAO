@@ -5,7 +5,8 @@ import json
 from ..core.auth import create_access_token, require_auth
 from ..core.db import get_session
 from ..core.limiter import limiter
-from ..core.models import ProofRequest as ProofRequestModel
+from ..core.models import ProofRequest as ProofRequestModel, PrivacyClass
+from ..core.privacy import audit_log_access
 from ..schemas.identity import (
     AppealRequest,
     AppealResponse,
@@ -34,6 +35,16 @@ def proof_request(
     - external_nullifier: nicht leer, String
     """
     ALLOWED_PROOF_TYPES = {"onboarding", "recovery", "voting"}
+    # Audit log: access to sensitive proof request
+    audit_log_access(
+        user_id=user["user_id"] if isinstance(user, dict) and "user_id" in user else str(user),
+        model="ProofRequest",
+        model_id=req.user_id,
+        action="POST /proof-request",
+        privacy_class=PrivacyClass.MEMBER_ONLY,
+        reason="ProofRequest submitted",
+        session=session,
+    )
     if (
         not req.user_id
         or not req.proof_type

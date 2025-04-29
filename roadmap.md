@@ -52,6 +52,10 @@ Diese Roadmap ist eng an die Dokumentation im `docs/`-Verzeichnis angedockt und 
 
 ---
 
+## [2025-04-29] AuditLog-Integration & Compliance
+- **Status:** AuditLog-Integration abgeschlossen, PrivacyClass-Enum validiert, MetaData-Kollisionen gelöst. Alle sensiblen Endpunkte (ProofRequest, Vote, Alert, KPI) sind jetzt vollständig auditierbar und testabgedeckt.
+- **Nächste Schritte:** Monitoring, Live Audits, Bug Bounty Integration, weitere Compliance-Automatisierung.
+
 ## [2025-04-29] Security Hardening & Rate Limiting
 - **Status:**
     - Rate Limiting (SlowAPI) für alle kritischen POST-Endpunkte (Vote, ProofRequest, Alert, Appeal) implementiert (10 req/min pro IP).

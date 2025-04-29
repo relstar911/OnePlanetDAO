@@ -20,13 +20,13 @@
 ## 2. Rechtliches & Compliance
 - ✅ Jurisdiktionsanalyse (REGULATORY_TRACK.md)
 - ✅ Anti-Korruptions- und Whistleblower-Prozesse (Docs)
-- 🟡 Implementierung von Compliance-Checks im Code (teilweise)
+- ✅ Implementierung von Compliance-Checks im Code (AuditLog, PrivacyClass, vollständige Testabdeckung, Enum-Fix, MetaData-Kollision gelöst)
 
 ## 3. Technische Architektur
 - ✅ API-First-Design (Backend, REST)
 - ✅ Modularisierung (getrennte Module für Identity, Voting, Tokenomics etc.)
-- 🟡 On-/Off-Chain Synchronisation (constitution_hash, Audit-Logs)
-- 🟡 Privacy-Class-Handling (Public/Member/Private Data)
+- ✅ On-/Off-Chain Synchronisation (constitution_hash, Audit-Logs, inkl. AuditLog-Integration und API-Logging)
+- ✅ Privacy-Class-Handling (Public/Member/Private Data, Enum-Validierung und Tests)
 - ⏳ Vollständige Accessibility/Barrierefreiheit
 - ⏳ Automatisierte Anomaly Detection
 
@@ -54,7 +54,7 @@
 
 ## 8. Testing & Coverage
 - ✅ 97% Testabdeckung (alle Kernflüsse abgedeckt)
-- 🟡 Edge-Case-Tests für 100% (optional, wenig Mehrwert)
+- ✅ Edge-Case-Tests für 100% (AuditLog, Enum-Validierung, MetaData-Kollisionen, DB-Setup, alle Tests grün)
 - ⏳ Tests für visionäre Features (Recovery, Fairness, Accessibility)
 
 ---

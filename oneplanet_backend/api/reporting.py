@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from ..core.db import get_session
 from ..schemas.reporting import KPIResponse
-from ..core.models import KPI
+from ..core.models import KPI, PrivacyClass
+from ..core.privacy import audit_log_access
 from typing import List, Optional
 from fastapi import Query
 
@@ -13,11 +14,23 @@ router = APIRouter()
 def create_kpi(kpi: KPIResponse, session: Session = Depends(get_session)):
     """
     KPI-Validierung:
-    - Pflichtfelder: region, onRampSuccess, accessibilityScore, privacyShieldOptIn, empowermentKPI
+    - Pflichtfelder: region, onRampSuccess, accessibilityScore,
+      privacyShieldOptIn, empowermentKPI
     - Wertebereiche:
-        onRampSuccess >=0, accessibilityScore 0-1, privacyShieldOptIn >=0, empowermentKPI >=0
+        onRampSuccess >=0, accessibilityScore 0-1,
+        privacyShieldOptIn >=0, empowermentKPI >=0
     - region darf nicht leer sein
     """
+    # Audit log: access to KPI creation
+    audit_log_access(
+        user_id="system",  # Optional: Hier kann bei späterem Auth-Feature der echte Nutzer
+        model="KPI",
+        model_id=kpi.region,
+        action="POST /kpis",
+        privacy_class=PrivacyClass.PUBLIC,
+        reason="KPI submitted",
+        session=session,
+    )
     if (
         not kpi.region
         or kpi.onRampSuccess is None
@@ -25,13 +38,12 @@ def create_kpi(kpi: KPIResponse, session: Session = Depends(get_session)):
         or kpi.privacyShieldOptIn is None
         or kpi.empowermentKPI is None
     ):
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=(
-                "Alle Felder (region, onRampSuccess, accessibilityScore, "
-                "privacyShieldOptIn, empowermentKPI) müssen gesetzt sein."
-            ),
+        detail_msg = (
+            "Missing required KPI fields: region, onRampSuccess, accessibilityScore, "
+            "privacyShieldOptIn, "
+            "empowermentKPI"
         )
+        raise HTTPException(status_code=400, detail=detail_msg)
     if not isinstance(kpi.region, str) or not kpi.region.strip():
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

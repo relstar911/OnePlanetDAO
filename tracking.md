@@ -58,6 +58,11 @@ This file documents every significant update to the One Planet project architect
 
 ---
 
+## [2025-04-29] AuditLog-Integration & Compliance-Upgrade
+- **Action:** AuditLog-Integration abgeschlossen, PrivacyClass-Enum refaktoriert, MetaData-Kollisionen beseitigt. Alle Tests laufen grün, vollständige Traceability und Compliance für sensible Endpunkte (ProofRequest, Vote, Alert, KPI) implementiert.
+- **Module:** core/privacy.py, alle API-Module, tests/
+- **Status:** Audit- und Privacy-Compliance jetzt robust und testabgedeckt. Enum-Werte werden strikt geprüft.
+
 ## [2025-04-29] Security Hardening & Rate Limiting
 - **Action:**
     - Implementierung von Rate Limiting (SlowAPI) für alle sicherheitsrelevanten POST-Endpunkte (`/api/governance/vote`, `/api/identity/proof-request`, `/api/tokenomics/alerts`, `/api/identity/appeal`).
