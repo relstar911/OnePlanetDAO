@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlmodel import Session, select
 from ..core.db import get_session
 from ..schemas.reporting import KPIResponse
 from ..core.models import KPI, PrivacyClass
 from ..core.privacy import audit_log_access
+from ..core.i18n import get_locale, get_error_message
 from typing import List, Optional
 from fastapi import Query
 
@@ -11,7 +12,7 @@ router = APIRouter()
 
 
 @router.post("/kpis", response_model=KPIResponse)
-def create_kpi(kpi: KPIResponse, session: Session = Depends(get_session)):
+def create_kpi(kpi: KPIResponse, request: Request, session: Session = Depends(get_session)):
     """
     KPI-Validierung:
     - Pflichtfelder: region, onRampSuccess, accessibilityScore,
@@ -38,35 +39,40 @@ def create_kpi(kpi: KPIResponse, session: Session = Depends(get_session)):
         or kpi.privacyShieldOptIn is None
         or kpi.empowermentKPI is None
     ):
-        detail_msg = (
-            "Missing required KPI fields: region, onRampSuccess, accessibilityScore, "
-            "privacyShieldOptIn, "
-            "empowermentKPI"
-        )
+        locale = get_locale(request)
+        detail_msg = get_error_message("missing_kpi_fields", locale)
         raise HTTPException(status_code=400, detail=detail_msg)
     if not isinstance(kpi.region, str) or not kpi.region.strip():
+        locale = get_locale(request)
+        detail_msg = get_error_message("invalid_region", locale)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=("region muss ein nicht-leerer String sein."),
+            detail=detail_msg,
         )
     if not isinstance(kpi.onRampSuccess, int) or kpi.onRampSuccess < 0:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="onRampSuccess muss >= 0 sein."
-        )
+        locale = get_locale(request)
+        detail_msg = get_error_message("invalid_onramp", locale)
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=detail_msg)
     if not isinstance(kpi.accessibilityScore, float) or not (0.0 <= kpi.accessibilityScore <= 1.0):
+        locale = get_locale(request)
+        detail_msg = get_error_message("invalid_accessibility", locale)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=("accessibilityScore muss zwischen 0 und 1 liegen."),
+            detail=detail_msg,
         )
     if not isinstance(kpi.privacyShieldOptIn, int) or kpi.privacyShieldOptIn < 0:
+        locale = get_locale(request)
+        detail_msg = get_error_message("invalid_privacyshield", locale)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="privacyShieldOptIn muss >= 0 sein.",
+            detail=detail_msg,
         )
     if not isinstance(kpi.empowermentKPI, int) or kpi.empowermentKPI < 0:
+        locale = get_locale(request)
+        detail_msg = get_error_message("invalid_empowerment", locale)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="empowermentKPI muss >= 0 sein.",
+            detail=detail_msg,
         )
 
     db_kpi = KPI(

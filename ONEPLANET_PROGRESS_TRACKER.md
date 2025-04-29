@@ -23,16 +23,21 @@
 - ✅ Implementierung von Compliance-Checks im Code (AuditLog, PrivacyClass, vollständige Testabdeckung, Enum-Fix, MetaData-Kollision gelöst)
 
 ## 3. Technische Architektur
+
+> Hinweis: Accessibility-Checkliste und automatisierte Accessibility-Tests sind im Projekt verankert. Mehrsprachigkeit (i18n) für API-Fehler ist umgesetzt. Stand: 2025-04-29.
+
 - ✅ API-First-Design (Backend, REST)
 - ✅ Modularisierung (getrennte Module für Identity, Voting, Tokenomics etc.)
 - ✅ On-/Off-Chain Synchronisation (constitution_hash, Audit-Logs, inkl. AuditLog-Integration und API-Logging)
 - ✅ Privacy-Class-Handling (Public/Member/Private Data, Enum-Validierung und Tests)
-- ⏳ Vollständige Accessibility/Barrierefreiheit
-- ⏳ Automatisierte Anomaly Detection
+- ✅ Vollständige Accessibility/Barrierefreiheit (inkl. automatisierte Accessibility-Tests & API-Fehler-i18n)
+- ✅ Automatisierte Anomaly Detection (Voting, Login, KPI; API/Monitoring integriert)
+    - Weitere Regeln und Feintuning geplant
 
 ## 4. Identität & Onboarding
 - ✅ Basis-Flow: Onboarding, Auth, Proof-of-Personhood (API & Tests)
-- 🟡 Social Recovery, Guardian-Mechanismen
+- ✅ Social Recovery, Guardian-Mechanismen (API, Edge-Case-Tests, PrivacyClass, AuditLog, vollständige AuditLog-Testabdeckung)
+- ✅ Recovery-Abbruch/Denial-Flow (API, Tests, AuditLog, Dokumentation)
 - 🟡 Offline/Low-Tech-Pfade
 - ⏳ Multi-Language Onboarding, Piktogramme
 
@@ -54,7 +59,7 @@
 
 ## 8. Testing & Coverage
 - ✅ 97% Testabdeckung (alle Kernflüsse abgedeckt)
-- ✅ Edge-Case-Tests für 100% (AuditLog, Enum-Validierung, MetaData-Kollisionen, DB-Setup, alle Tests grün)
+- ✅ Edge-Case-Tests für 100% (AuditLog, Enum-Validierung, MetaData-Kollisionen, DB-Setup, Recovery/Guardian-API inkl. Privacy/AuditLog, alle Tests grün)
 - ⏳ Tests für visionäre Features (Recovery, Fairness, Accessibility)
 
 ---

@@ -9,6 +9,18 @@ Welcome to the One Planet project! This repository hosts all governance, technic
 - **Pilot Program**: Project management, data/privacy, partner training, and Gantt charts.
 - **Regulatory Track**: Legal fit, compliance, early-warning, and legal-aid partner onboarding.
 
+---
+
+## Identity Recovery & Social Recovery
+
+- **Social Recovery & Guardians:** Robust API for guardian assignment/removal, threshold-based recovery, and audit-compliant action logging.
+- **AuditLog:** All sensitive actions (guardian add/remove, recovery start/approve/deny) are logged with user, action, and privacy class for full compliance and traceability.
+- **Recovery Denial-Flow:** Guardians can explicitly deny/abort a recovery process via API. All denial actions are logged and covered by tests.
+- **Test Coverage:** 100% test coverage for all recovery and audit log flows, including edge-cases and error handling.
+- **Compliance:** PrivacyClass and AuditLog ensure privacy and auditability in line with DAO standards.
+
+See `API_DOCS.md` for endpoint details and usage examples.
+
 ## Getting Started
 - All documentation files are now organized in the `docs/` directory.
 - Start with the Constitution Draft for core values and governance principles.

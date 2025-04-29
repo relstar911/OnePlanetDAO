@@ -4,7 +4,7 @@ from starlette.responses import JSONResponse
 from oneplanet_backend.core.limiter import limiter
 from slowapi import _rate_limit_exceeded_handler
 
-from .api import governance, identity, tokenomics, reporting
+from .api import governance, identity, tokenomics, reporting, anomaly, recovery
 
 app = FastAPI(
     title="One Planet Backend",
@@ -34,6 +34,8 @@ app.include_router(governance.router, prefix="/api/governance")
 app.include_router(identity.router, prefix="/api/identity")
 app.include_router(tokenomics.router, prefix="/api/tokenomics")
 app.include_router(reporting.router, prefix="/api/reporting")
+app.include_router(anomaly.router, prefix="/api/anomaly")
+app.include_router(recovery.router, prefix="/api/identity")
 
 
 @app.get("/")

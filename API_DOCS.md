@@ -131,6 +131,55 @@ Retrieve all votes, filterable by user_id, proposal_id, etc.
 ---
 
 ### 4. Identity (Proof Requests)
+
+---
+
+### 5. Social Recovery & Guardian API
+
+#### `POST /api/identity/guardians`
+Fügt einem Nutzer einen Guardian hinzu.
+- **Parameter (Query):** `user_id` (str), `guardian_id` (str)
+- **Response:**
+```json
+{"user_id": "alice", "guardian_id": "bob", "status": "active"}
+```
+- **Fehler:** 400 Guardian already assigned
+
+#### `DELETE /api/identity/guardians`
+Entfernt einen Guardian von einem Nutzer.
+- **Parameter (Query):** `user_id` (str), `guardian_id` (str)
+- **Response:**
+```json
+{"msg": "Guardian revoked."}
+```
+- **Fehler:** 404 Guardian not found
+
+#### `POST /api/identity/recovery-request`
+Startet einen Social Recovery-Prozess.
+- **Parameter (Query):** `user_id` (str), `initiator_id` (str), `threshold` (int, optional)
+- **Response:**
+```json
+{"id": 1, "user_id": "alice", "initiator_id": "alice", "status": "pending", "approvals": [], "threshold": 2}
+```
+
+#### `POST /api/identity/recovery-approve`
+Guardian stimmt Recovery zu.
+- **Parameter (Query):** `request_id` (int), `guardian_id` (str)
+- **Response:**
+```json
+{"id": 1, "user_id": "alice", "initiator_id": "alice", "status": "approved", "approvals": ["bob", "carol"], "threshold": 2}
+```
+- **Fehler:** 404 (Request nicht gefunden oder denied/completed), 400 (Guardian already approved)
+
+#### `GET /api/identity/recovery-status?request_id=...`
+Gibt Status eines Recovery-Prozesses zurück.
+- **Response:**
+```json
+{"id": 1, "user_id": "alice", "initiator_id": "alice", "status": "approved", "approvals": ["bob", "carol"], "threshold": 2}
+```
+- **Fehler:** 404 (Request nicht gefunden)
+
+---
 #### `POST /api/identity/proof-request`
 Submit a proof request for onboarding, voting, or recovery.
 
@@ -167,7 +216,38 @@ Retrieve all proof requests, filterable by user_id, proof_type, etc.
 
 ---
 
-### 5. Appeals
+### 6. Identity Recovery
+
+#### `POST /api/identity/recovery-deny`
+Denies (aborts) an active recovery process. Only possible if the request is still pending/approved.
+
+**Parameters (query):**
+- `request_id` (int, required): The ID of the recovery request
+- `denier_id` (string, required): The user/guardian denying the recovery
+- `reason` (string, optional): Reason for denial (for audit log)
+
+**Request Example:**
+```
+POST /api/identity/recovery-deny?request_id=42&denier_id=bob&reason=security+concern
+```
+
+**Response Example:**
+```json
+{
+  "id": 42,
+  "user_id": "alice",
+  "initiator_id": "alice",
+  "status": "denied",
+  "approvals": ["bob"],
+  "threshold": 2
+}
+```
+
+**Error Responses:**
+- `404 Not Found`: Recovery request not found or already denied/completed
+
+---
+
 #### `POST /api/identity/appeal`
 Submit an appeal (e.g., for identity recovery).
 

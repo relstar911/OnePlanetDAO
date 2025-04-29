@@ -81,6 +81,14 @@ This file documents every significant update to the One Planet project architect
 
 ---
 
+## [2025-04-30] Recovery-Denial-Flow abgeschlossen
+- **Action:** Neuer Endpoint `/api/identity/recovery-deny` implementiert. Guardians/Admins können Recovery-Prozesse explizit abbrechen (Status = denied). Vollständige Testabdeckung (inkl. Edge Cases und AuditLog-Prüfung).
+- **AuditLog:** Jeder Denial wird mit Action `DENY_RECOVERY` und PrivacyClass `member_only` geloggt.
+- **Docs:** API_DOCS.md und README.md um neuen Flow/Doku ergänzt. Fortschrittstracker und Roadmap aktualisiert.
+- **Status:** Recovery & AuditLog-Mechanismen sind vollständig, compliant und dokumentiert.
+
+---
+
 ## [2025-04-29] JWT Auth & Security-Testing
 - **Action:**
     - JWT-Authentifizierung für alle sensiblen POST-Endpunkte implementiert (Login, Token, Bearer-Auth).

@@ -56,6 +56,15 @@ Diese Roadmap ist eng an die Dokumentation im `docs/`-Verzeichnis angedockt und 
 - **Status:** AuditLog-Integration abgeschlossen, PrivacyClass-Enum validiert, MetaData-Kollisionen gelöst. Alle sensiblen Endpunkte (ProofRequest, Vote, Alert, KPI) sind jetzt vollständig auditierbar und testabgedeckt.
 - **Nächste Schritte:** Monitoring, Live Audits, Bug Bounty Integration, weitere Compliance-Automatisierung.
 
+---
+
+## [2025-04-30] Recovery-Denial-Flow abgeschlossen
+- **Status:** Social Recovery, Guardian-Mechanismen, AuditLog-Tests und Recovery-Abbruch/Denial-Flow (API, AuditLog, Tests, Docs) sind vollständig implementiert und dokumentiert.
+- **Nächste Schritte:**
+    - Erweiterte Security- und Recovery-Features (z.B. Recovery-Timeouts, Benachrichtigungen, Admin-Overrides)
+    - Weitere Live Audits und Penetration Testing
+    - Community-Feedback einholen und Roadmap anpassen
+
 ## [2025-04-29] Security Hardening & Rate Limiting
 - **Status:**
     - Rate Limiting (SlowAPI) für alle kritischen POST-Endpunkte (Vote, ProofRequest, Alert, Appeal) implementiert (10 req/min pro IP).
