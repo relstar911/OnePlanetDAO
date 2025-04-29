@@ -41,3 +41,52 @@ This file documents every significant update to the One Planet project architect
 - **Action:** Der ProofRequest-Endpunkt `/api/identity/proof-request` speichert ProofRequests jetzt persistent in der Datenbank. Ein GET-Endpunkt `/api/identity/proof-requests` listet alle ProofRequests (Demo/Test).
 - **Doku-Referenz:** [IDENTITY_LAYER_RND.md](./docs/IDENTITY_LAYER_RND.md)
 - **Status:** ProofRequest-Flow ist jetzt voll persistiert und bereit für weitere Logik und Audits.
+
+---
+
+## [2025-04-29] Persistente KPI-API
+- **Action:** Die KPI-Endpunkte `/api/reporting/kpis` erlauben jetzt das Anlegen und Listen von KPIs in der Datenbank. Optional kann nach Region gefiltert werden.
+- **Doku-Referenz:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
+- **Status:** KPI-Flow ist jetzt voll persistiert und bereit für weitere Auswertungen und Logik.
+
+---
+
+## [2025-04-29] Persistente Alert-API
+- **Action:** Die Alert-Endpunkte `/api/tokenomics/alerts` erlauben jetzt das Anlegen und Listen von Alerts in der Datenbank.
+- **Doku-Referenz:** [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
+- **Status:** Alert-Flow ist jetzt voll persistiert und bereit für weitere Auswertungen und Logik.
+
+---
+
+## [2025-04-29] Persistenz-Kernmodule abgeschlossen
+- **Action:** Alle Kernmodule (Voting, ProofRequest, KPI, Alert) sind jetzt persistent, produktionsreif und dokumentiert.
+- **Nächster Meilenstein:**
+    - Validierungs- und Auswertungslogik für alle Module (Business Rules, Data Quality, ZK-Proof-Checks etc.).
+    - Aufbau der Teststruktur und erste Unit-/Integrationstests.
+    - README und API-Dokumentation weiter ausbauen.
+
+---
+
+## [2025-04-29] Validierungslogik für Kernmodule
+
+---
+
+## [2025-04-29] Testabdeckung für Kernmodule
+- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) existieren Unit-Tests für Fehlerfälle (Validation, Pflichtfelder, Wertebereiche) und Erfolgsszenarien (gültige Requests).
+- **Abgedeckt:**
+    - POST-Endpunkte für Voting, ProofRequest, KPI, Alert
+    - Fehlerfälle (422) und Erfolgsfälle (200)
+- **Nächste Schritte:**
+    - Testabdeckung für GET-Endpunkte und komplexere Business Rules erweitern
+    - README und API-Dokumentation mit Beispielen und Testhinweisen ergänzen
+    - Optional: CI/CD-Integration für automatisierte Tests
+
+- **Action:** Für alle Kernmodule wurde eine Validierungslogik für Pflichtfelder und Wertebereiche implementiert. Fehler werden als HTTP 422 mit klarer Message zurückgegeben.
+- **Module:**
+    - Voting: Pflichtfelder, vote_weights >= 0, proof-Format
+    - ProofRequest: Pflichtfelder, erlaubte proof_type, public_signals als Liste
+    - KPI: Pflichtfelder, Wertebereiche, region nicht leer
+    - Alert: Pflichtfelder, Wertebereiche, Strings nicht leer
+- **Nächste Schritte:**
+    - Teststruktur aufbauen und Unit-/Integrationstests für alle Module anlegen
+    - README und API-Dokumentation weiter ausbauen

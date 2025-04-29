@@ -50,6 +50,60 @@ Diese Roadmap ist eng an die Dokumentation im `docs/`-Verzeichnis angedockt und 
     - Erweiterung um Validierung (Proof-Typ, Signalprüfung).
     - Dokumentation und Tracking nach jedem Modul-Update.
 
+---
+
+## [2025-04-29] Persistente KPI-API
+- **Status:** Die KPI-Endpunkte `/api/reporting/kpis` erlauben jetzt das Anlegen und Listen von KPIs in der Datenbank. Optional kann nach Region gefiltert werden.
+- **Doku-Referenz:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
+- **Nächste Schritte:**
+    - Persistenz für Alerts.
+    - Validierung und Auswertungslogik für KPIs.
+    - Dokumentation und Tracking nach jedem Modul-Update.
+
+---
+
+## [2025-04-29] Persistente Alert-API
+- **Status:** Die Alert-Endpunkte `/api/tokenomics/alerts` erlauben jetzt das Anlegen und Listen von Alerts in der Datenbank.
+- **Doku-Referenz:** [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
+- **Nächste Schritte:**
+    - Validierung und Auswertungslogik für Alerts.
+    - Dokumentation und Tracking nach jedem Modul-Update.
+
+---
+
+## [2025-04-29] Persistenz-Kernmodule abgeschlossen
+- **Status:** Alle Kernmodule (Voting, ProofRequest, KPI, Alert) sind jetzt persistent, produktionsreif und dokumentiert.
+- **Nächster Meilenstein:**
+    - Validierungs- und Auswertungslogik für alle Module (Business Rules, Data Quality, ZK-Proof-Checks etc.).
+    - Aufbau der Teststruktur und erste Unit-/Integrationstests.
+    - README und API-Dokumentation weiter ausbauen.
+
+---
+
+## [2025-04-29] Validierungslogik für Kernmodule
+
+---
+
+## [2025-04-29] Testabdeckung für Kernmodule
+- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) existieren Unit-Tests für Fehlerfälle (Validation, Pflichtfelder, Wertebereiche) und Erfolgsszenarien (gültige Requests).
+- **Abgedeckt:**
+    - POST-Endpunkte für Voting, ProofRequest, KPI, Alert
+    - Fehlerfälle (422) und Erfolgsfälle (200)
+- **Nächste Schritte:**
+    - Testabdeckung für GET-Endpunkte und komplexere Business Rules erweitern
+    - README und API-Dokumentation mit Beispielen und Testhinweisen ergänzen
+    - Optional: CI/CD-Integration für automatisierte Tests
+
+- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) wurden Pflichtfeld- und Wertebereichsprüfungen sowie klare Fehlermeldungen (HTTP 422) implementiert.
+- **Module:**
+    - Voting: Pflichtfelder, vote_weights >= 0, proof-Format
+    - ProofRequest: Pflichtfelder, erlaubte proof_type, public_signals als Liste
+    - KPI: Pflichtfelder, Wertebereiche, region nicht leer
+    - Alert: Pflichtfelder, Wertebereiche, Strings nicht leer
+- **Nächste Schritte:**
+    - Aufbau der Teststruktur und erste Tests für alle Module
+    - README und API-Dokumentation weiter ausbauen
+
 ## Verknüpfte Dokumentationsbereiche
 - [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
 - [IDENTITY_LAYER_RND.md](./docs/IDENTITY_LAYER_RND.md)

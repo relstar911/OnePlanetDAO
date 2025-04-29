@@ -8,9 +8,28 @@ import json
 
 router = APIRouter()
 
+from fastapi import HTTPException, status
+
 @router.post("/proof-request", response_model=ProofResponse)
 def proof_request(req: ProofRequest, session: Session = Depends(get_session)):
-    """Process proof request for onboarding, recovery, voting."""
+    """
+    Process proof request for onboarding, recovery, voting.
+    Validierung:
+    - Pflichtfelder: user_id, proof_type, public_signals, external_nullifier
+    - proof_type: nur bestimmte Werte erlaubt
+    - public_signals: nicht-leere Liste
+    - external_nullifier: nicht leer, String
+    """
+    ALLOWED_PROOF_TYPES = {"onboarding", "recovery", "voting"}
+    if not req.user_id or not req.proof_type or req.public_signals is None or not req.external_nullifier:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Alle Felder (user_id, proof_type, public_signals, external_nullifier) müssen gesetzt sein.")
+    if req.proof_type not in ALLOWED_PROOF_TYPES:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"proof_type muss einer der erlaubten Werte sein: {ALLOWED_PROOF_TYPES}")
+    if not isinstance(req.public_signals, list) or not req.public_signals:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="public_signals muss eine nicht-leere Liste sein.")
+    if not isinstance(req.external_nullifier, str) or not req.external_nullifier.strip():
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="external_nullifier darf nicht leer sein und muss ein String sein.")
+
     db_proof = ProofRequestModel(
         user_id=req.user_id,
         proof_type=req.proof_type,
