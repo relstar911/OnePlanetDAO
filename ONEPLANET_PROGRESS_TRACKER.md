@@ -1,92 +1,100 @@
-# One Planet – Fortschritts- und Gap-Tracker
+# One Planet – Progress and Gap Tracker
+
+> **Purpose:** This document provides a comprehensive overview of the development status of One Planet: from vision to implementation. It visualizes achieved milestones, ongoing work, and open gaps – as a supplement to the roadmap and tracking documents.
 
 > **Ziel:** Dieses Dokument gibt einen Gesamtüberblick über den Entwicklungsstand von One Planet: von der Vision bis zur Umsetzung. Es visualisiert erreichte Meilensteine, laufende Arbeiten und offene Gaps – als Ergänzung zu Roadmap und Tracking-Dokumenten.
 
 ---
 
-## Legende
-- ✅ **Abgeschlossen**
-- 🟡 **In Arbeit**
-- ⏳ **Geplant/Offen**
-- ❌ **Noch nicht begonnen**
+## Legend
+- ✅ **Completed**
+- 🟡 **In Progress**
+- ⏳ **Planned/Open**
+- ❌ **Not started yet**
 
 ---
 
-## 1. Vision & Werte (Docs)
-- ✅ Werte & Ethik (CONSTITUTION_DRAFT.md, SYSTEM_BLUEPRINT.md)
-- ✅ Governance-Struktur (SYSTEM_BLUEPRINT.md)
-- ✅ Privacy- und Fairness-Prinzipien (alle Kern-Dokumente)
+## 1. Vision & Values (Docs)
+- ✅ Values & Ethics (CONSTITUTION_DRAFT.md, SYSTEM_BLUEPRINT.md)
+- ✅ Governance Structure (SYSTEM_BLUEPRINT.md)
+- ✅ Privacy and Fairness Principles (all core documents)
 
-## 2. Rechtliches & Compliance
-- ✅ Jurisdiktionsanalyse (REGULATORY_TRACK.md)
-- ✅ Anti-Korruptions- und Whistleblower-Prozesse (Docs)
-- ✅ Implementierung von Compliance-Checks im Code (AuditLog, PrivacyClass, vollständige Testabdeckung, Enum-Fix, MetaData-Kollision gelöst)
+## 2. Legal & Compliance
+- ✅ Jurisdiction Analysis (REGULATORY_TRACK.md)
+- ✅ Anti-Corruption and Whistleblower Processes (Docs)
+- ✅ Implementation of Compliance Checks in Code (AuditLog, PrivacyClass, full test coverage, enum fix, metadata collision resolved)
 
-## 3. Technische Architektur
+## 3. Technical Architecture
 
-> Hinweis: Accessibility-Checkliste und automatisierte Accessibility-Tests sind im Projekt verankert. Mehrsprachigkeit (i18n) für API-Fehler ist umgesetzt. Stand: 2025-04-29.
+> Note: Accessibility checklist and automated accessibility tests are anchored in the project. Multilingualism (i18n) for API errors is implemented. Status: 2025-04-29.
 
-- ✅ API-First-Design (Backend, REST)
-- ✅ Modularisierung (getrennte Module für Identity, Voting, Tokenomics etc.)
-- ✅ On-/Off-Chain Synchronisation (constitution_hash, Audit-Logs, inkl. AuditLog-Integration und API-Logging)
-- ✅ Privacy-Class-Handling (Public/Member/Private Data, Enum-Validierung und Tests)
-- ✅ Vollständige Accessibility/Barrierefreiheit (inkl. automatisierte Accessibility-Tests & API-Fehler-i18n)
-- ✅ Automatisierte Anomaly Detection (Voting, Login, KPI; API/Monitoring integriert)
-    - Weitere Regeln und Feintuning geplant
+- ✅ API-First Design (Backend, REST)
+- ✅ Modularization (separate modules for Identity, Voting, Tokenomics, etc.)
+- ✅ On-/Off-Chain Synchronization (constitution_hash, audit logs, incl. AuditLog integration and API logging)
+- ✅ Privacy Class Handling (Public/Member/Private Data, enum validation and tests)
+- ✅ Full Accessibility (incl. automated accessibility tests & API error i18n)
+- ✅ Automated Anomaly Detection (Voting, Login, KPI; API/monitoring integrated)
+    - Further rules and fine-tuning planned
 
-## 4. Identität & Onboarding
-- ✅ Basis-Flow: Onboarding, Auth, Proof-of-Personhood (API & Tests)
-- ✅ Social Recovery, Guardian-Mechanismen (API, Edge-Case-Tests, PrivacyClass, AuditLog, vollständige AuditLog-Testabdeckung)
-- ✅ Recovery-Abbruch/Denial-Flow (API, Tests, AuditLog, Dokumentation)
-- 🟡 Offline/Low-Tech-Pfade
-- ⏳ Multi-Language Onboarding, Piktogramme
+## 4. Identity & Onboarding
+- ✅ Basic Flow: Onboarding, Auth, Proof-of-Personhood (API & tests)
+- ✅ Social Recovery, Guardian Mechanisms (API, edge-case tests, PrivacyClass, AuditLog, full AuditLog test coverage)
+- ✅ Recovery Denial Flow (API, tests, AuditLog, documentation)
+- ⏳ Recovery Timeout Feature (expiry date for recovery requests, automatic status change to "expired")
+- ⏳ Guardian Notifications (notifications for recovery actions)
+- 🟡 Offline/Low-Tech Paths
+- ⏳ Multi-Language Onboarding, pictograms
 
 ## 5. Governance & Voting
-- ✅ Quadratic Voting, Soul-Credits (Tokenomics-Design, API)
-- 🟡 KPI-Dashboards: MSI, VEI, Collusion Alerts
-- ⏳ Adaptive Parameter, Minority Bloc Rescue (Automatisierung)
+- ✅ Quadratic Voting, Soul-Credits (Tokenomics design, API)
+- 🟡 KPI Dashboards: MSI, VEI, Collusion Alerts
+- ⏳ Adaptive Parameters, Minority Bloc Rescue (automation)
 
 ## 6. Community & Fairness
 - ✅ Code of Conduct, Moderation (Docs)
-- 🟡 Reputation/Badges (Konzept, noch nicht im Code)
+- 🟡 Reputation/Badges (concept, not yet in code)
 - ⏳ Reserved Representation, Equity Dashboards
 
-## 7. Sicherheit & Transparenz
-- ✅ Auth, Rate-Limit, JWT, Tests (Code)
+## 7. Security & Transparency
+- ✅ Auth, Rate Limit, JWT, Tests (code)
 - ✅ Multisig/Role Separation (Docs)
+- ⏳ AuditLog Export (API/CLI for compliance and analysis)
 - 🟡 On-Chain Event Logging
 - ⏳ Live Audits, Red-Teaming, Bug Bounty Integration
 
 ## 8. Testing & Coverage
-- ✅ 97% Testabdeckung (alle Kernflüsse abgedeckt)
-- ✅ Edge-Case-Tests für 100% (AuditLog, Enum-Validierung, MetaData-Kollisionen, DB-Setup, Recovery/Guardian-API inkl. Privacy/AuditLog, alle Tests grün)
-- ⏳ Tests für visionäre Features (Recovery, Fairness, Accessibility)
+- ✅ 97% test coverage (all core flows covered)
+- ✅ Edge-case tests for 100% (AuditLog, enum validation, metadata collisions, DB setup, Recovery/Guardian API incl. Privacy/AuditLog, all tests green)
+- 🟡 Edge-case and security tests (race conditions, abuse, parallel flows)
+- ⏳ Test Fixture Globalization (automated DB setup for all tests)
+- ⏳ Accessibility and i18n tests
+- ⏳ Tests for visionary features (Recovery, Fairness, Accessibility)
 
 ---
 
-## **Visualisierung: Fortschrittsbalken**
+## **Visualization: Progress Bar**
 
-| Bereich                  | Status              |
-|--------------------------|---------------------|
-| Vision & Werte           | ✅ 100%             |
-| Recht & Compliance       | 🟡 80%              |
-| Technische Architektur   | 🟡 75%              |
-| Identität & Onboarding   | 🟡 70%              |
-| Governance & Voting      | 🟡 70%              |
-| Community & Fairness     | 🟡 60%              |
-| Sicherheit & Transparenz | 🟡 75%              |
-| Testing & Coverage       | ✅ 97%              |
-
----
-
-## **Gaps & Next Steps (Empfehlung)**
-- Fokus auf visionäre Features (Recovery, Accessibility, Fairness-Dashboards)
-- Compliance- und Privacy-Class-Handling im Code stärken
-- KPI-Dashboards und Equity/Minority-Mechanismen umsetzen
-- Tests für neue Features ergänzen
+| Area                     | Status   |
+|--------------------------|----------|
+| Vision & Values          | ✅ 100%  |
+| Legal & Compliance       | 🟡 80%   |
+| Technical Architecture   | 🟡 75%   |
+| Identity & Onboarding    | 🟡 70%   |
+| Governance & Voting      | 🟡 70%   |
+| Community & Fairness     | 🟡 60%   |
+| Security & Transparency  | 🟡 75%   |
+| Testing & Coverage       | ✅ 97%   |
 
 ---
 
-**Letztes Update:** 2025-04-29
+## **Gaps & Next Steps (Recommendation)**
+- Focus on visionary features (Recovery, Accessibility, Fairness Dashboards)
+- Strengthen compliance and privacy class handling in code
+- Implement KPI dashboards and equity/minority mechanisms
+- Add tests for new features
 
-> Dieses Dokument ergänzt die Roadmap um einen ganzheitlichen Fortschrittsüberblick und wird regelmäßig aktualisiert.
+---
+
+**Last update:** 2025-04-29
+
+> This document supplements the roadmap with a holistic progress overview and is updated regularly.

@@ -18,131 +18,131 @@ This file documents every significant update to the One Planet project architect
 
 ---
 
-## [2025-04-29] API-Schnittstellen-Implementierung
-- **Action:** Alle Kern-API-Router (Governance, Identity, Tokenomics, Reporting) gemäß den Spezifikationen in den Docs als FastAPI-Module implementiert und aktiviert.
-- **Endpunkte:**
+## [2025-04-29] API Interface Implementation
+- **Action:** All core API routers (Governance, Identity, Tokenomics, Reporting) implemented and activated as FastAPI modules according to the specifications in the docs.
+- **Endpoints:**
     - `POST /api/governance/vote` (Quadratic Voting)
-    - `POST /api/identity/proof-request`, `POST /api/identity/appeal` (ZK-Proofs & Appeals)
+    - `POST /api/identity/proof-request`, `POST /api/identity/appeal` (Zero-Knowledge Proofs & Appeals)
     - `GET /api/tokenomics/alerts` (MSI, VEI, Collusion Alerts)
-    - `GET /api/reporting/kpis` (Regionale KPIs)
-- **Schemas:** Alle Pydantic-Modelle exakt nach API-Spezifikation in den Markdown-Dokumenten.
-- **Status:** Backend bereit für Erweiterung um Business-Logik, weitere Endpunkte und Datenpersistenz.
+    - `GET /api/reporting/kpis` (Regional KPIs)
+- **Schemas:** All Pydantic models exactly according to API specifications in the Markdown documents.
+- **Status:** Backend ready for extension with business logic, additional endpoints, and data persistence.
 
 ---
 
-## [2025-04-29] Persistente Voting-API
-- **Action:** Der Voting-Endpunkt `/api/governance/vote` speichert Votes jetzt persistent in der Datenbank und gibt die Vote-ID als tx_hash zurück. Ein GET-Endpunkt `/api/governance/votes` listet alle gespeicherten Votes (Demo/Test).
-- **Doku-Referenz:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md), [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
-- **Status:** Voting-Flow ist jetzt voll persistiert und bereit für Auswertungen, Audits und weitere Business-Logik.
+## [2025-04-29] Persistent Voting API
+- **Action:** The voting endpoint `/api/governance/vote` now stores votes persistently in the database and returns the vote ID as `tx_hash`. A GET endpoint `/api/governance/votes` lists all stored votes (demo/test).
+- **Doc Reference:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md), [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
+- **Status:** Voting flow is now fully persistent and ready for evaluations, audits, and further business logic.
 
 ---
 
-## [2025-04-29] Persistente ProofRequest-API
-- **Action:** Der ProofRequest-Endpunkt `/api/identity/proof-request` speichert ProofRequests jetzt persistent in der Datenbank. Ein GET-Endpunkt `/api/identity/proof-requests` listet alle ProofRequests (Demo/Test).
-- **Doku-Referenz:** [IDENTITY_LAYER_RND.md](./docs/IDENTITY_LAYER_RND.md)
-- **Status:** ProofRequest-Flow ist jetzt voll persistiert und bereit für weitere Logik und Audits.
+## [2025-04-29] Persistent Proof Request API
+- **Action:** The proof request endpoint `/api/identity/proof-request` now stores proof requests persistently in the database. A GET endpoint `/api/identity/proof-requests` lists all proof requests (demo/test).
+- **Doc Reference:** [IDENTITY_LAYER_RND.md](./docs/IDENTITY_LAYER_RND.md)
+- **Status:** Proof request flow is now fully persistent and ready for further logic and audits.
 
 ---
 
-## [2025-04-29] Persistente KPI-API
-- **Action:** Die KPI-Endpunkte `/api/reporting/kpis` erlauben jetzt das Anlegen und Listen von KPIs in der Datenbank. Optional kann nach Region gefiltert werden.
-- **Doku-Referenz:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
-- **Status:** KPI-Flow ist jetzt voll persistiert und bereit für weitere Auswertungen und Logik.
+## [2025-04-29] Persistent KPI API
+- **Action:** The KPI endpoints `/api/reporting/kpis` now allow creating and listing KPIs in the database. Optional filtering by region is possible.
+- **Doc Reference:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
+- **Status:** KPI flow is now fully persistent and ready for further evaluations and logic.
 
 ---
 
-## [2025-04-29] Persistente Alert-API
-- **Action:** Die Alert-Endpunkte `/api/tokenomics/alerts` erlauben jetzt das Anlegen und Listen von Alerts in der Datenbank.
-- **Doku-Referenz:** [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
-- **Status:** Alert-Flow ist jetzt voll persistiert und bereit für weitere Auswertungen und Logik.
+## [2025-04-29] Persistent Alert API
+- **Action:** The alert endpoints `/api/tokenomics/alerts` now allow creating and listing alerts in the database.
+- **Doc Reference:** [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
+- **Status:** Alert flow is now fully persistent and ready for further evaluations and logic.
 
 ---
 
-## [2025-04-29] AuditLog-Integration & Compliance-Upgrade
-- **Action:** AuditLog-Integration abgeschlossen, PrivacyClass-Enum refaktoriert, MetaData-Kollisionen beseitigt. Alle Tests laufen grün, vollständige Traceability und Compliance für sensible Endpunkte (ProofRequest, Vote, Alert, KPI) implementiert.
-- **Module:** core/privacy.py, alle API-Module, tests/
-- **Status:** Audit- und Privacy-Compliance jetzt robust und testabgedeckt. Enum-Werte werden strikt geprüft.
+## [2025-04-29] Audit Log Integration & Compliance Upgrade
+- **Action:** Audit log integration completed, PrivacyClass enum refactored, metadata collisions resolved. All tests run green, full traceability and compliance for sensitive endpoints (proof request, vote, alert, KPI) implemented.
+- **Modules:** core/privacy.py, all API modules, tests/
+- **Status:** Audit and privacy compliance now robust and test-covered. Enum values are strictly checked.
 
 ## [2025-04-29] Security Hardening & Rate Limiting
 - **Action:**
-    - Implementierung von Rate Limiting (SlowAPI) für alle sicherheitsrelevanten POST-Endpunkte (`/api/governance/vote`, `/api/identity/proof-request`, `/api/tokenomics/alerts`, `/api/identity/appeal`).
-    - Fehlerausgaben für Rate Limit und Validierungsfehler werden jetzt konsistent als JSON ausgegeben.
-    - Refaktorierung: Limiter-Objekt zentral in `core/limiter.py`, Import-Probleme (circular imports) gelöst.
-    - Automatisierte Tests für Rate Limiting und Fehlerausgaben durchgeführt.
-    - Roadmap und Tracking auf aktuellen Stand gebracht (siehe `roadmap.md`).
+    - Implemented rate limiting (SlowAPI) for all security-relevant POST endpoints (`/api/governance/vote`, `/api/identity/proof-request`, `/api/tokenomics/alerts`, `/api/identity/appeal`).
+    - Error outputs for rate limit and validation errors are now consistently output as JSON.
+    - Refactored: Limiter object centralized in `core/limiter.py`, import problems (circular imports) solved.
+    - Automated tests for rate limiting and error outputs performed.
+    - Roadmap and tracking updated (see `roadmap.md`).
 - **Status:**
-    - Security Layer (Rate Limiting, Fehlerbehandlung) ist produktionsreif.
-    - API-Dokumentation und OpenAPI-UI spiegeln die Änderungen wider.
+    - Security layer (rate limiting, error handling) is production-ready.
+    - API documentation and OpenAPI UI reflect the changes.
 - **Next:**
-    - JWT-Authentifizierung für geschützte Endpunkte.
-    - Linting und Code-Qualitätschecks (flake8, black).
-    - Ausbau der Testabdeckung (Unit/Integration, Rate-Limit, Fehlerfälle).
-    - Deployment-Vorbereitung (Settings, Logging, HTTPS).
+    - JWT authentication for protected endpoints.
+    - Linting and code quality checks (flake8, black).
+    - Expansion of test coverage (unit/integration, rate limit, error cases).
+    - Deployment preparation (settings, logging, HTTPS).
 
 ---
 
-## [2025-04-30] Recovery-Denial-Flow abgeschlossen
-- **Action:** Neuer Endpoint `/api/identity/recovery-deny` implementiert. Guardians/Admins können Recovery-Prozesse explizit abbrechen (Status = denied). Vollständige Testabdeckung (inkl. Edge Cases und AuditLog-Prüfung).
-- **AuditLog:** Jeder Denial wird mit Action `DENY_RECOVERY` und PrivacyClass `member_only` geloggt.
-- **Docs:** API_DOCS.md und README.md um neuen Flow/Doku ergänzt. Fortschrittstracker und Roadmap aktualisiert.
-- **Status:** Recovery & AuditLog-Mechanismen sind vollständig, compliant und dokumentiert.
+## [2025-04-30] Recovery Denial Flow Completed
+- **Action:** New endpoint `/api/identity/recovery-deny` implemented. Guardians/admins can explicitly cancel recovery processes (status = denied). Full test coverage (including edge cases and audit log checks).
+- **Audit Log:** Each denial is logged with action `DENY_RECOVERY` and privacy class `member_only`.
+- **Docs:** API_DOCS.md and README.md updated with new flow/docs. Progress tracker and roadmap updated.
+- **Status:** Recovery and audit log mechanisms are fully implemented, compliant, and documented.
 
 ---
 
-## [2025-04-29] JWT Auth & Security-Testing
+## [2025-04-29] JWT Auth & Security Testing
 - **Action:**
-    - JWT-Authentifizierung für alle sensiblen POST-Endpunkte implementiert (Login, Token, Bearer-Auth).
-    - Automatisierte Tests für Auth-Flow, Rate Limiting, Fehlerausgaben und alle Kernfunktionen erfolgreich durchgeführt.
-    - ProofRequest, Appeal, Vote, Alert: alle Endpunkte produktionsreif und gegen Missbrauch geschützt.
+    - JWT authentication implemented for all sensitive POST endpoints (login, token, bearer auth).
+    - Automated tests for auth flow, rate limiting, error outputs, and all core functions successfully performed.
+    - Proof request, appeal, vote, alert: all endpoints production-ready and protected against misuse.
 - **Status:**
-    - Security Layer (JWT, Auth, Limiting, Fehlerbehandlung) ist produktionsreif.
-    - API-Dokumentation und OpenAPI-UI spiegeln die Änderungen wider.
+    - Security layer (JWT, auth, limiting, error handling) is production-ready.
+    - API documentation and OpenAPI UI reflect the changes.
 - **Next:**
-    - Linting und Code-Qualitätschecks (flake8, black).
-    - Testabdeckung weiter ausbauen.
-    - Deployment-Vorbereitung und Security-Hardening.
+    - Linting and code quality checks (flake8, black).
+    - Further expansion of test coverage.
+    - Deployment preparation and security hardening.
 
 ---
 
-## [2025-04-29] Persistenz-Kernmodule abgeschlossen
-- **Action:** Alle Kernmodule (Voting, ProofRequest, KPI, Alert) sind jetzt persistent, produktionsreif und dokumentiert.
-- **Nächster Meilenstein:**
-    - Validierungs- und Auswertungslogik für alle Module (Business Rules, Data Quality, ZK-Proof-Checks etc.).
-    - Aufbau der Teststruktur und erste Unit-/Integrationstests.
-    - README und API-Dokumentation weiter ausbauen.
+## [2025-04-29] Persistence Core Modules Completed
+- **Action:** All core modules (voting, proof request, KPI, alert) are now persistent, production-ready, and documented.
+- **Next Milestone:**
+    - Validation and evaluation logic for all modules (business rules, data quality, zero-knowledge proof checks, etc.).
+    - Setup of the test structure and initial unit/integration tests.
+    - README and API documentation further expanded.
 
 ---
 
-## [2025-04-29] Validierungslogik für Kernmodule
+## [2025-04-29] Validation Logic for Core Modules
 
 ---
 
-## [2025-04-29] Testabdeckung & Stabilität für Kernmodule
-- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) existieren Unit- und Integrationstests für Fehlerfälle (Validation, Pflichtfelder, Wertebereiche) und Erfolgsszenarien (gültige Requests).
-- **Abgedeckt:**
-    - POST-Endpunkte für Voting, ProofRequest, KPI, Alert
-    - Fehlerfälle (422) und Erfolgsfälle (200)
-    - GET-Endpunkte für Votes, ProofRequests, KPIs, Alerts
-    - JWT-Auth, Rate-Limit, Security Layer
-- **Testabdeckung:** 97% (Coverage-Report vom 2025-04-29)
-- **Status:** Alle Kernmodule stabil, produktionsreif und vollständig getestet.
-- **Nächste Schritte:**
-    - Tests für neue visionäre Features ergänzen (Recovery, Accessibility, Fairness-Dashboards)
-    - README und API-Dokumentation mit Beispielen und Testhinweisen ergänzen
-    - Optional: CI/CD-Integration für automatisierte Tests
+## [2025-04-29] Test Coverage & Stability for Core Modules
+- **Status:** For all core modules (voting, proof request, KPI, alert), unit and integration tests exist for error cases (validation, required fields, value ranges) and success scenarios (valid requests).
+- **Covered:**
+    - POST endpoints for voting, proof request, KPI, alert
+    - Error cases (422) and success cases (200)
+    - GET endpoints for votes, proof requests, KPIs, alerts
+    - JWT auth, rate limit, security layer
+- **Test Coverage:** 97% (coverage report from 2025-04-29)
+- **Status:** All core modules stable, production-ready, and fully tested.
+- **Next Steps:**
+    - Add tests for new visionary features (recovery, accessibility, fairness dashboards)
+    - Update README and API documentation with examples and test hints
+    - Optional: CI/CD integration for automated tests
 
 ---
 
-## [2025-04-29] Visionäre Features & Gaps (NEU)
-- **Recovery & Social Recovery:** 🟡 Konzept vorhanden, Implementierung geplant
-- **Accessibility/Barrierefreiheit:** 🟡 Teilweise konzipiert, technische Umsetzung offen
-- **Fairness-Dashboards (MSI, VEI, Equity):** 🟡 KPIs und Mockups vorhanden, Backend/Frontend fehlt noch
-- **Compliance- und Privacy-Class-Handling:** 🟡 Teilweise im Code, vollständige Umsetzung ausstehend
-- **Guardian/Appeal-Mechanismen:** ⏳ Konzept vorhanden, noch nicht umgesetzt
-- **Multi-Region/Offline-Onboarding:** ⏳ Konzept vorhanden, technische Umsetzung offen
-- **Automatisierte Anomaly Detection:** ⏳ Konzept vorhanden, technische Umsetzung offen
-- **On-Chain/Off-Chain Synchronisation (constitution_hash, Audit-Logs):** ⏳ Konzept vorhanden, technische Umsetzung offen
+## [2025-04-29] Visionary Features & Gaps (NEW)
+- **Recovery & Social Recovery:** Concept available, implementation planned
+- **Accessibility/Barrierefreiheit:** Partially designed, technical implementation open
+- **Fairness Dashboards (MSI, VEI, Equity):** KPIs and mockups available, backend/frontend missing
+- **Compliance and Privacy Class Handling:** Partially in code, complete implementation pending
+- **Guardian/Appeal Mechanisms:** Concept available, not yet implemented
+- **Multi-Region/Offline Onboarding:** Concept available, technical implementation open
+- **Automated Anomaly Detection:** Concept available, technical implementation open
+- **On-Chain/Off-Chain Synchronization (constitution_hash, Audit Logs):** Concept available, technical implementation open
 
 ---
 
-**Letztes Update:** 2025-04-29
+**Last Update:** 2025-04-29

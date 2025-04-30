@@ -1,158 +1,111 @@
 # One Planet Roadmap
 
-Diese Roadmap ist eng an die Dokumentation im `docs/`-Verzeichnis angedockt und beschreibt die nächsten Entwicklungsschritte, Meilensteine und Verantwortlichkeiten. Sie wird nach jedem Update gepflegt und dient der langfristigen Planung und Nachvollziehbarkeit.
+This roadmap is closely linked to the documentation in the `docs/` directory and outlines the next development steps, milestones, and responsibilities. It is updated after every change and serves as a tool for long-term planning and traceability.
 
 ---
 
-## [2025-04-29] Initiale Roadmap-Aufsetzung
-- **Status:** Architektur und API-Schnittstellen gemäß Dokumentation stehen, Projekt ist bereit für die Implementierungsphase.
-- **Nächste Schritte:**
-    1. **API-Logik & Persistenz:**
-        - Implementierung der Kernlogik für alle Endpunkte (Governance, Identity, Tokenomics, Reporting) gemäß den Spezifikationen in `ONE_PLANET_SYSTEM_BLUEPRINT.md`, `IDENTITY_LAYER_RND.md`, `TOKENOMICS_SOULCREDITS.md`.
-        - Anbindung an Datenbank (z.B. PostgreSQL, SQLite).
+## [2025-04-29] Initial Roadmap Setup
+- **Status:** Architecture and API interfaces are defined according to the documentation; the project is ready for the implementation phase.
+- **Next Steps:**
+    1. **API Logic & Persistence:**
+        - Implement core logic for all endpoints (Governance, Identity, Tokenomics, Reporting) as specified in `ONE_PLANET_SYSTEM_BLUEPRINT.md`, `IDENTITY_LAYER_RND.md`, `TOKENOMICS_SOULCREDITS.md`.
+        - Connect to a database (e.g., PostgreSQL, SQLite).
     2. **Testing & CI/CD:**
-        - Aufbau der Teststruktur (`oneplanet_backend/tests/`), erste Unit- und Integrationstests.
-        - Einrichtung von Linting und Continuous Integration.
-    3. **Frontend/Dashboard-Prototyp:**
-        - Mockups und ggf. erste Implementierung gemäß den UI-Blueprints in der Dokumentation.
+        - Set up the test structure (`oneplanet_backend/tests/`), create initial unit and integration tests.
+        - Set up linting and continuous integration.
+    3. **Frontend/Dashboard Prototype:**
+        - Mockups and initial implementation according to UI blueprints in the documentation.
     4. **Deployment & Monitoring:**
-        - Automatisiertes Deployment, Healthchecks, Alerting.
-    5. **Feedbackschleife:**
-        - Regelmäßige Reviews, Updates und Erweiterungen der Roadmap nach Pilotdaten und Community-Feedback.
+        - Automated deployment, health checks, alerting.
+    5. **Feedback Loop:**
+        - Regular reviews, updates, and roadmap extensions based on pilot data and community feedback.
 
 ---
 
-## [2025-04-29] DB-Setup & Datenmodellierung
-- **Status:** SQLite-Datenbank und SQLModel-Integration als Persistenzschicht eingerichtet (`core/db.py`).
-- **Modelle:** User, Proposal, Vote, ProofRequest, Alert, KPI gemäß den Vorgaben und Datenstrukturen aus den docs (`ONE_PLANET_SYSTEM_BLUEPRINT.md`, `IDENTITY_LAYER_RND.md`, `TOKENOMICS_SOULCREDITS.md`).
-- **Nächste Schritte:**
-    - Migrationen und Tabelleninitialisierung (automatisiert beim Start).
-    - Erweiterung der API-Endpunkte für echte DB-Operationen (CRUD).
-    - Dokumentation und Tracking der Datenmodelle mit Verweis auf die jeweiligen doc-Abschnitte.
+## [2025-04-29] DB Setup & Data Modeling
+- **Status:** SQLite database and SQLModel integration established as the persistence layer (`core/db.py`).
+- **Models:** User, Proposal, Vote, ProofRequest, Alert, KPI as specified in the docs (`ONE_PLANET_SYSTEM_BLUEPRINT.md`, `IDENTITY_LAYER_RND.md`, `TOKENOMICS_SOULCREDITS.md`).
+- **Next Steps:**
+    - Automate migrations and table initialization at startup.
+    - Extend API endpoints for real database operations (CRUD).
+    - Document and track data models with references to the relevant doc sections.
 
 ---
 
-## [2025-04-29] Persistente Voting-API
-- **Status:** Der Voting-Endpunkt `/api/governance/vote` speichert Votes jetzt persistent in der Datenbank (inkl. user_id, proposal_id, vote_weights, proof). Ein zusätzlicher GET-Endpunkt `/api/governance/votes` listet alle Votes für Demo- und Testzwecke.
-- **Doku-Referenz:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md), [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
-- **Nächste Schritte:**
-    - Analoge Persistenz für ProofRequests, KPIs, Alerts.
-    - Erweiterung um Validierung (Eligibility, ZK-Proof-Prüfung).
-    - Dokumentation und Tracking nach jedem Modul-Update.
+## [2025-04-29] Persistent Voting API
+- **Status:** The voting endpoint `/api/governance/vote` now persistently stores votes in the database (including user_id, proposal_id, vote_weights, proof). An additional GET endpoint `/api/governance/votes` lists all votes for demo and testing purposes.
+- **Doc Reference:** [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md), [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
+- **Next Steps:**
+    - Analogous persistence for ProofRequests, KPIs, Alerts.
+    - Extend with validation (eligibility, ZK-proof verification).
+    - Document and track after each module update.
 
 ---
 
-## [2025-04-29] Persistente ProofRequest-API
-- **Status:** Der ProofRequest-Endpunkt `/api/identity/proof-request` speichert Anfragen jetzt persistent in der Datenbank (inkl. user_id, proof_type, public_signals, external_nullifier). Ein GET-Endpunkt `/api/identity/proof-requests` listet alle ProofRequests für Demo- und Testzwecke.
-- **Doku-Referenz:** [IDENTITY_LAYER_RND.md](./docs/IDENTITY_LAYER_RND.md)
-- **Nächste Schritte:**
-    - Persistenz für KPIs, Alerts.
-    - Erweiterung um Validierung (Proof-Typ, Signalprüfung).
-    - Dokumentation und Tracking nach jedem Modul-Update.
+## [2025-04-29] Persistent ProofRequest API
+- **Status:** The ProofRequest endpoint `/api/identity/proof-request` now persistently stores requests in the database (including user_id, proof_type, public_signals, external_nullifier). A GET endpoint `/api/identity/proof-requests` lists all ProofRequests for demo and testing purposes.
+- **Doc Reference:** [IDENTITY_LAYER_RND.md](./docs/IDENTITY_LAYER_RND.md)
+- **Next Steps:**
+    - Persistence for KPIs, Alerts.
+    - Extend with validation (proof type, signal verification).
+    - Document and track after each module update.
 
 ---
 
-## [2025-04-29] AuditLog-Integration & Compliance
-- **Status:** AuditLog-Integration abgeschlossen, PrivacyClass-Enum validiert, MetaData-Kollisionen gelöst. Alle sensiblen Endpunkte (ProofRequest, Vote, Alert, KPI) sind jetzt vollständig auditierbar und testabgedeckt.
-- **Nächste Schritte:** Monitoring, Live Audits, Bug Bounty Integration, weitere Compliance-Automatisierung.
+## [2025-04-29] AuditLog Integration & Compliance
+- **Status:** AuditLog integration completed, PrivacyClass enum validated, metadata collisions resolved. All sensitive endpoints (ProofRequest, Vote, Alert, KPI) are now fully auditable and covered by tests.
+- **Next Steps:** Monitoring, live audits, bug bounty integration, further compliance automation.
 
 ---
 
-## [2025-04-30] Recovery-Denial-Flow abgeschlossen
-- **Status:** Social Recovery, Guardian-Mechanismen, AuditLog-Tests und Recovery-Abbruch/Denial-Flow (API, AuditLog, Tests, Docs) sind vollständig implementiert und dokumentiert.
-- **Nächste Schritte:**
-    - Erweiterte Security- und Recovery-Features (z.B. Recovery-Timeouts, Benachrichtigungen, Admin-Overrides)
-    - Weitere Live Audits und Penetration Testing
-    - Community-Feedback einholen und Roadmap anpassen
+## [2025-04-30] Recovery Denial Flow Completed
+- **Status:** Social recovery, guardian mechanisms, audit log tests, and recovery denial flow (API, audit log, tests, docs) are fully implemented and documented.
+- **Next Steps:**
+    - Advanced security and recovery features (e.g., recovery timeouts, notifications, admin overrides)
+    - Additional live audits and penetration testing
+    - Gather community feedback and adapt the roadmap
+
+---
 
 ## [2025-04-29] Security Hardening & Rate Limiting
 - **Status:**
-    - Rate Limiting (SlowAPI) für alle kritischen POST-Endpunkte (Vote, ProofRequest, Alert, Appeal) implementiert (10 req/min pro IP).
-    - Fehlerausgaben sind konsistent und im JSON-Format.
-    - Limiter-Objekt zentralisiert in `core/limiter.py`, Import-Refaktorierung abgeschlossen (keine Circular Imports mehr).
-    - API-Doku und OpenAPI-UI spiegeln die Änderungen wider.
-- **Nächste Schritte:**
-    - JWT-Authentifizierung für geschützte Endpunkte.
-    - Linting und Code-Qualitätschecks (flake8, black).
-    - Ausbau der Testabdeckung (Unit/Integration, Rate-Limit, Fehlerfälle).
-    - Deployment-Vorbereitung (Settings, Logging, HTTPS).
+    - Rate limiting (SlowAPI) implemented for all critical POST endpoints (Vote, ProofRequest, Alert, Appeal) (10 req/min per IP).
+    - Error outputs are consistent and in JSON format.
+    - Limiter object centralized in `core/limiter.py`, import refactoring completed (no more circular imports).
+    - API documentation and OpenAPI UI reflect the changes.
+- **Next Steps:**
+    - JWT authentication for protected endpoints.
+    - Linting and code quality checks (flake8, black).
+    - Expand test coverage (unit/integration, rate limit, error cases).
+    - Deployment preparation (settings, logging, HTTPS).
 
 ---
 
-## [2025-04-29] JWT Auth & Security-Testing
+## [2025-04-29] JWT Auth & Security Testing
 - **Status:**
-    - JWT-Authentifizierung für alle sensiblen POST-Endpunkte implementiert (Login, Token, Bearer-Auth).
-    - Automatisierte Tests für Auth-Flow, Rate Limiting, Fehlerausgaben und alle Kernfunktionen erfolgreich durchgeführt.
-    - ProofRequest, Appeal, Vote, Alert: alle Endpunkte produktionsreif und gegen Missbrauch geschützt.
-- **Nächste Schritte:**
-    - Linting und Code-Qualitätschecks (flake8, black).
-    - Testabdeckung weiter ausbauen.
-    - Deployment-Vorbereitung und Security-Hardening.
+    - JWT authentication implemented for all sensitive POST endpoints (login, token, bearer auth).
+    - Automated tests for auth flow, rate limiting, error outputs, and all core functions successfully executed.
+    - ProofRequest, Appeal, Vote, Alert: all endpoints production-ready and protected against abuse.
+- **Next Steps:**
+    - Monitoring, live audits, bug bounty integration, further compliance automation.
 
 ---
 
-## [2025-04-29] Persistente Alert-API
-- **Status:** Die Alert-Endpunkte `/api/tokenomics/alerts` erlauben jetzt das Anlegen und Listen von Alerts in der Datenbank.
-- **Doku-Referenz:** [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
-- **Nächste Schritte:**
-    - Validierung und Auswertungslogik für Alerts.
-    - Dokumentation und Tracking nach jedem Modul-Update.
+## [2025-04-30] Planned Features & Next Steps
+- **Recovery Timeout Feature (planned):**
+    - Expiry date for recovery requests, automatic status change to "expired" after deadline. Abuse prevention and compliance.
+- **Guardian Notifications (planned):**
+    - Notifications for guardians and users on recovery actions (approval/denial, threshold reached).
+- **AuditLog Export (planned):**
+    - API/CLI endpoint for exporting audit logs (CSV/JSON) for compliance and external analysis.
+- **Test Fixture Globalization (in progress):**
+    - Standardization and automation of test DB setup for all tests.
 
 ---
 
-## [2025-04-29] Persistenz-Kernmodule abgeschlossen
-- **Status:** Alle Kernmodule (Voting, ProofRequest, KPI, Alert) sind jetzt persistent, produktionsreif und dokumentiert.
-- **Nächster Meilenstein:**
-    - Validierungs- und Auswertungslogik für alle Module (Business Rules, Data Quality, ZK-Proof-Checks etc.).
-    - Aufbau der Teststruktur und erste Unit-/Integrationstests.
-    - README und API-Dokumentation weiter ausbauen.
+**Last update:** 2025-04-30
 
----
-
-## [2025-04-29] Validierungslogik für Kernmodule
-
----
-
-## [2025-04-29] Testabdeckung & Stabilität für Kernmodule
-- **Status:** Für alle Kernmodule (Voting, ProofRequest, KPI, Alert) existieren Unit- und Integrationstests für Fehlerfälle (Validation, Pflichtfelder, Wertebereiche) und Erfolgsszenarien (gültige Requests).
-- **Abgedeckt:**
-    - POST-Endpunkte für Voting, ProofRequest, KPI, Alert
-    - Fehlerfälle (422) und Erfolgsfälle (200)
-    - GET-Endpunkte für Votes, ProofRequests, KPIs, Alerts
-    - JWT-Auth, Rate-Limit, Security Layer
-- **Testabdeckung:** 97% (Coverage-Report vom 2025-04-29)
-- **Status:** Alle Kernmodule stabil, produktionsreif und vollständig getestet.
-- **Nächste Schritte:**
-    - Tests für neue visionäre Features ergänzen (Recovery, Accessibility, Fairness-Dashboards)
-    - README und API-Dokumentation mit Beispielen und Testhinweisen ergänzen
-    - Optional: CI/CD-Integration für automatisierte Tests
-
----
-
-## [2025-04-29] Visionäre Features & Gaps (NEU)
-- **Recovery & Social Recovery:** 🟡 Konzept vorhanden, Implementierung geplant
-- **Accessibility/Barrierefreiheit:** 🟡 Teilweise konzipiert, technische Umsetzung offen
-- **Fairness-Dashboards (MSI, VEI, Equity):** 🟡 KPIs und Mockups vorhanden, Backend/Frontend fehlt noch
-- **Compliance- und Privacy-Class-Handling:** 🟡 Teilweise im Code, vollständige Umsetzung ausstehend
-- **Guardian/Appeal-Mechanismen:** ⏳ Konzept vorhanden, noch nicht umgesetzt
-- **Multi-Region/Offline-Onboarding:** ⏳ Konzept vorhanden, technische Umsetzung offen
-- **Automatisierte Anomaly Detection:** ⏳ Konzept vorhanden, technische Umsetzung offen
-- **On-Chain/Off-Chain Synchronisation (constitution_hash, Audit-Logs):** ⏳ Konzept vorhanden, technische Umsetzung offen
-
----
-
-## [2025-04-29] Nächste Schritte (Update)
-- Visionäre Features (Recovery, Accessibility, Fairness-Dashboards, Compliance-Checks, KPI-Dashboards, Equity/Minority-Mechanismen) umsetzen
-- Compliance- und Privacy-Class-Handling im Code stärken
-- KPI-Dashboards und Equity/Minority-Mechanismen umsetzen
-- Tests für neue Features ergänzen
-- README und API-Dokumentation weiter ausbauen
-
----
-
-**Letztes Update:** 2025-04-29
-
-## Verknüpfte Dokumentationsbereiche
+## Linked Documentation Sections
 - [ONE_PLANET_SYSTEM_BLUEPRINT.md](./docs/ONE_PLANET_SYSTEM_BLUEPRINT.md)
 - [IDENTITY_LAYER_RND.md](./docs/IDENTITY_LAYER_RND.md)
 - [TOKENOMICS_SOULCREDITS.md](./docs/TOKENOMICS_SOULCREDITS.md)
@@ -162,4 +115,5 @@ Diese Roadmap ist eng an die Dokumentation im `docs/`-Verzeichnis angedockt und 
 
 ---
 
-**Jeder Meilenstein und jede Änderung wird hier dokumentiert und mit den entsprechenden Dokumentationsabschnitten verlinkt.**
+Every milestone and change is documented here and linked to the relevant documentation sections.
+
