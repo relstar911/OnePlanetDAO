@@ -32,6 +32,11 @@ if not JWT_SECRET:
 # --- Database ---
 DATABASE_URL: str = os.environ.get("DATABASE_URL", "sqlite:///./oneplanet.db")
 
+# --- CORS ---
+ALLOWED_ORIGINS: list[str] = [
+    o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "").split(",") if o.strip()
+]
+
 # --- Rate Limiting ---
 RATE_LIMIT_DEFAULT: str = os.environ.get("RATE_LIMIT_DEFAULT", "100/minute")
 RATE_LIMIT_STRICT: str = os.environ.get("RATE_LIMIT_STRICT", "10/minute")

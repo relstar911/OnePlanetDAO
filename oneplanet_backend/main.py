@@ -22,7 +22,7 @@ from oneplanet_backend.api import (
     seed,
     tokenomics,
 )
-from oneplanet_backend.core.config import ENVIRONMENT
+from oneplanet_backend.core.config import ALLOWED_ORIGINS, ENVIRONMENT
 from oneplanet_backend.core.db import engine
 from oneplanet_backend.core.limiter import limiter
 
@@ -44,13 +44,11 @@ app = FastAPI(
 )
 
 # CORS – allow frontend origins
+_dev_origins = ["http://localhost:3000", "http://localhost:5173"]
+_cors_origins = _dev_origins + ALLOWED_ORIGINS if ENVIRONMENT == "development" else ALLOWED_ORIGINS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=(
-        ["http://localhost:3000", "http://localhost:5173", "*"]
-        if ENVIRONMENT == "development"
-        else []
-    ),
+    allow_origins=_cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

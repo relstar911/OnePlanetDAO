@@ -69,6 +69,7 @@ Thumbs.db
 # Ignore secrets
 .env
 .env.*
+!.env.example
 
 # Ignore docs build
 _build/

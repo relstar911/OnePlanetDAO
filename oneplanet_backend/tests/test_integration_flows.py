@@ -232,3 +232,120 @@ def test_vote_on_nonexistent_proposal():
     }
     resp = client.post("/api/governance/vote", json=data, headers=auth_headers)
     assert resp.status_code in (200, 422)
+
+
+# --- Integration/E2E: Full Register → Proposal → Vote → Verify Flow ---
+def test_full_register_proposal_vote_verify():
+    """Complete E2E: register, login, create proposal, vote, verify all data."""
+    uid = "e2e_user_" + "".join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    pwd = "securepass42"
+
+    # 1. Register
+    reg = client.post(
+        "/api/identity/register",
+        json={"user_id": uid, "password": pwd, "region": "TestRegion"},
+    )
+    assert reg.status_code == 200
+    assert "access_token" in reg.json()
+    assert reg.json()["user_id"] == uid
+
+    # 2. Login with same credentials
+    login = client.post("/api/identity/login", json={"user_id": uid, "password": pwd})
+    assert login.status_code == 200
+    token = login.json()["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
+
+    # 3. Create a proposal
+    prop_id = "e2e-prop-" + "".join(random.choices(string.ascii_lowercase, k=6))
+    prop = client.post(
+        "/api/governance/proposals",
+        json={"proposal_id": prop_id, "title": "E2E Test Proposal", "description": "Testing"},
+        headers=headers,
+    )
+    assert prop.status_code == 200
+    assert prop.json()["proposal_id"] == prop_id
+
+    # 4. Verify proposal appears in list
+    props = client.get("/api/governance/proposals")
+    assert props.status_code == 200
+    assert any(p["proposal_id"] == prop_id for p in props.json())
+
+    # 5. Submit proof request
+    proof = client.post(
+        "/api/identity/proof-request",
+        json={
+            "user_id": uid,
+            "proof_type": "voting",
+            "public_signals": ["e2e-signal"],
+            "external_nullifier": "e2e-null",
+        },
+        headers=headers,
+    )
+    assert proof.status_code == 200
+
+    # 6. Vote on the proposal
+    vote = client.post(
+        "/api/governance/vote",
+        json={
+            "user_id": uid,
+            "proposal_id": prop_id,
+            "vote_weights": {"option_a": 3, "option_b": 1},
+            "proof": "e2e-zk-proof",
+        },
+        headers=headers,
+    )
+    assert vote.status_code == 200
+    assert vote.json()["status"] == "success"
+
+    # 7. Verify vote appears
+    votes = client.get("/api/governance/votes")
+    assert votes.status_code == 200
+    my_votes = [v for v in votes.json() if v["user_id"] == uid]
+    assert len(my_votes) == 1
+    assert my_votes[0]["proposal_id"] == prop_id
+    assert my_votes[0]["vote_weights"]["option_a"] == 3
+
+    # 8. Verify proof request appears
+    proofs = client.get("/api/identity/proof-requests")
+    assert proofs.status_code == 200
+    my_proofs = [p for p in proofs.json() if p["user_id"] == uid]
+    assert len(my_proofs) == 1
+    assert my_proofs[0]["proof_type"] == "voting"
+
+    # 9. Duplicate registration should fail
+    dup = client.post(
+        "/api/identity/register",
+        json={"user_id": uid, "password": "otherpass1234"},
+    )
+    assert dup.status_code == 409
+
+    # 10. Wrong password login should fail
+    bad_login = client.post("/api/identity/login", json={"user_id": uid, "password": "wrong"})
+    assert bad_login.status_code == 401
+
+
+# --- Integration/E2E: Seed endpoint creates full demo data ---
+def test_seed_creates_all_entities():
+    """Verify seed endpoint creates users, proposals, votes, KPIs, alerts, anomalies."""
+    resp = client.post("/api/dev/seed")
+    assert resp.status_code == 200
+    body = resp.json()
+    if body.get("seeded"):
+        assert body["counts"]["users"] == 7
+        assert body["counts"]["proposals"] == 3
+        assert body["counts"]["votes"] == 7
+        assert body["counts"]["kpis"] == 5
+        assert body["counts"]["alerts"] == 3
+        assert body["counts"]["anomalies"] == 3
+
+        # Verify seeded users can login
+        login = client.post(
+            "/api/identity/login",
+            json={"user_id": "alice", "password": "alice1234"},
+        )
+        assert login.status_code == 200
+        assert "access_token" in login.json()
+
+        # Verify proposals exist
+        props = client.get("/api/governance/proposals")
+        assert len(props.json()) >= 3
