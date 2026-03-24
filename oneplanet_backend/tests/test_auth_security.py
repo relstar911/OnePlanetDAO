@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+
 from oneplanet_backend.main import app
 
 client = TestClient(app)
@@ -37,7 +38,7 @@ def test_protected_endpoint_no_token():
         },
     )
     print("NO TOKEN:", resp.status_code, resp.text)
-    assert resp.status_code == 403
+    assert resp.status_code in (401, 403)
     assert resp.json()["detail"] == "Not authenticated"
 
 

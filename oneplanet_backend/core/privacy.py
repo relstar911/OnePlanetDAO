@@ -6,9 +6,11 @@ Privacy and Audit Logging Module
 - audit_log_access: Function to log access events
 """
 
+from datetime import UTC, datetime
 from enum import Enum
-from sqlmodel import SQLModel, Field, Session
-from datetime import datetime
+
+from sqlmodel import Field, Session, SQLModel
+
 from .db import get_session
 
 
@@ -25,7 +27,7 @@ class AuditLog(SQLModel, table=True):
     model_id: str
     action: str
     privacy_class: PrivacyClass
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     reason: str = ""
 
 

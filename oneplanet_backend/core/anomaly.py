@@ -1,15 +1,15 @@
 # anomaly.py – Datenmodell und Hilfsfunktionen für Anomaly Detection
-from datetime import datetime
-from typing import Optional
-from sqlmodel import SQLModel, Field
+from datetime import UTC, datetime
+
+from sqlmodel import Field, SQLModel
 
 
 class AnomalyLog(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    id: int | None = Field(default=None, primary_key=True)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     type: str  # z.B. "voting", "login", "kpi"
     description: str
-    user_id: Optional[str] = None
+    user_id: str | None = None
     severity: str = "low"  # "low", "medium", "high"
     resolved: bool = False
 
@@ -18,7 +18,7 @@ class AnomalyLog(SQLModel, table=True):
 
 
 def log_anomaly(
-    session, type_: str, description: str, user_id: Optional[str] = None, severity: str = "low"
+    session, type_: str, description: str, user_id: str | None = None, severity: str = "low"
 ):
     anomaly = AnomalyLog(
         type=type_,

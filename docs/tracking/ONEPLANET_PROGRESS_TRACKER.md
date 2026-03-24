@@ -1,4 +1,6 @@
-# One Planet – Progress and Gap Tracker
+# One Planet – Progress and Gap Tracker (ARCHIVIERT)
+
+> **ARCHIVIERT** – Letzte Aktualisierung April 2025. Viele Angaben hier sind überholt oder übertrieben. Aktueller Stand: siehe `docs/STATUS.md`.
 
 > **Purpose:** This document provides a comprehensive overview of the development status of One Planet: from vision to implementation. It visualizes achieved milestones, ongoing work, and open gaps – as a supplement to the roadmap and tracking documents.
 

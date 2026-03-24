@@ -1,4 +1,6 @@
-# One Planet Roadmap
+# One Planet Roadmap (ARCHIVIERT)
+
+> **ARCHIVIERT** – Letzte Aktualisierung April 2025. Aktueller Fahrplan: siehe `docs/ROADMAP_2026.md`.
 
 This roadmap is closely linked to the documentation in the `docs/` directory and outlines the next development steps, milestones, and responsibilities. It is updated after every change and serves as a tool for long-term planning and traceability.
 

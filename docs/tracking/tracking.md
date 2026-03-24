@@ -1,4 +1,6 @@
-# One Planet Tracking Log
+# One Planet Tracking Log (ARCHIVIERT)
+
+> **ARCHIVIERT** – Dieses Dokument wurde zuletzt im April 2025 aktualisiert und ist veraltet. Aktueller Stand: siehe `docs/STATUS.md`.
 
 This file documents every significant update to the One Planet project architecture, codebase, and documentation. Please append a new entry after each change, referencing the affected modules, rationale, and links to related documentation.
 
