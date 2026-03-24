@@ -692,3 +692,59 @@ def test_alert_invalid_msi(auth_headers):
     resp = client.post("/api/tokenomics/alerts", json=data, headers=auth_headers)
     assert resp.status_code == 422
     assert "msi" in resp.text
+
+
+# ==================== PROPOSAL TESTS ====================
+
+
+def test_proposal_create_success(auth_headers):
+    data = {"proposal_id": "test-prop-1", "title": "Test Proposal", "description": "A test"}
+    resp = client.post("/api/governance/proposals", json=data, headers=auth_headers)
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["proposal_id"] == "test-prop-1"
+    assert body["title"] == "Test Proposal"
+
+
+def test_proposal_create_duplicate(auth_headers):
+    data = {"proposal_id": "dup-prop", "title": "First"}
+    client.post("/api/governance/proposals", json=data, headers=auth_headers)
+    resp = client.post("/api/governance/proposals", json=data, headers=auth_headers)
+    assert resp.status_code == 409
+
+
+def test_proposal_create_missing_title(auth_headers):
+    data = {"proposal_id": "no-title", "title": ""}
+    resp = client.post("/api/governance/proposals", json=data, headers=auth_headers)
+    assert resp.status_code == 400
+
+
+def test_proposal_create_missing_id(auth_headers):
+    data = {"proposal_id": "", "title": "No ID"}
+    resp = client.post("/api/governance/proposals", json=data, headers=auth_headers)
+    assert resp.status_code == 400
+
+
+def test_proposal_list_empty():
+    resp = client.get("/api/governance/proposals")
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+def test_proposal_list_after_create(auth_headers):
+    client.post(
+        "/api/governance/proposals",
+        json={"proposal_id": "list-test", "title": "Listed"},
+        headers=auth_headers,
+    )
+    resp = client.get("/api/governance/proposals")
+    assert resp.status_code == 200
+    proposals = resp.json()
+    assert len(proposals) == 1
+    assert proposals[0]["proposal_id"] == "list-test"
+
+
+def test_proposal_requires_auth():
+    data = {"proposal_id": "unauth", "title": "No Auth"}
+    resp = client.post("/api/governance/proposals", json=data)
+    assert resp.status_code in (401, 403)

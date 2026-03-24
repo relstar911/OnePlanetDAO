@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { Vote, Send, CheckCircle, AlertCircle, Info } from "lucide-react";
 import { api } from "@/lib/api";
-import type { Vote as VoteType } from "@/lib/api";
+import type { Vote as VoteType, Proposal } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 
 export default function VotingPage() {
   const { isLoggedIn, userId } = useAuth();
   const [votes, setVotes] = useState<VoteType[]>([]);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Form state
@@ -19,12 +20,15 @@ export default function VotingPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    api
-      .getVotes()
-      .then(setVotes)
+    Promise.all([api.getVotes(), api.getProposals()])
+      .then(([v, p]) => {
+        setVotes(v);
+        setProposals(p);
+        if (p.length > 0 && !proposalId) setProposalId(p[0].proposal_id);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Parse "choice:weight, choice:weight" into Record<string, number>
   const parseWeights = (input: string): Record<string, number> | null => {
@@ -125,16 +129,31 @@ export default function VotingPage() {
 
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                Proposal ID
+                Proposal
               </label>
-              <input
-                type="text"
-                value={proposalId}
-                onChange={(e) => setProposalId(e.target.value)}
-                required
-                placeholder="e.g. climate-fund-2026"
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25"
-              />
+              {proposals.length > 0 ? (
+                <select
+                  value={proposalId}
+                  onChange={(e) => setProposalId(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25"
+                >
+                  {proposals.map((p) => (
+                    <option key={p.proposal_id} value={p.proposal_id} className="bg-zinc-900">
+                      {p.title}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={proposalId}
+                  onChange={(e) => setProposalId(e.target.value)}
+                  required
+                  placeholder="e.g. climate-fund-2026"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25"
+                />
+              )}
             </div>
 
             <div>
