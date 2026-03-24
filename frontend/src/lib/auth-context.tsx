@@ -6,6 +6,7 @@ import { api } from "./api";
 interface AuthContextType {
   isLoggedIn: boolean;
   userId: string | null;
+  register: (userId: string, password: string, region?: string) => Promise<void>;
   login: (userId: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -13,6 +14,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   userId: null,
+  register: async () => {},
   login: async () => {},
   logout: () => {},
 });
@@ -30,6 +32,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(!!stored.token && !!stored.user);
   const [userId, setUserId] = useState<string | null>(stored.user);
 
+  const register = async (uid: string, password: string, region?: string) => {
+    await api.register({ user_id: uid, password, region });
+    localStorage.setItem("op_user", uid);
+    setUserId(uid);
+    setIsLoggedIn(true);
+  };
+
   const login = async (uid: string, password: string) => {
     await api.login({ user_id: uid, password });
     localStorage.setItem("op_user", uid);
@@ -45,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, userId, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, userId, register, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

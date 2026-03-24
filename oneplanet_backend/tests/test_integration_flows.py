@@ -12,7 +12,15 @@ client = TestClient(app)
 
 
 def get_auth_headers(user_id):
-    resp = client.post("/api/identity/login", json={"user_id": user_id, "password": "pw"})
+    # Register user first, then login
+    client.post(
+        "/api/identity/register",
+        json={"user_id": user_id, "password": "testpass1234"},
+    )
+    resp = client.post(
+        "/api/identity/login",
+        json={"user_id": user_id, "password": "testpass1234"},
+    )
     assert resp.status_code == 200
     token = resp.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}

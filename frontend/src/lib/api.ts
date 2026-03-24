@@ -1,5 +1,17 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+export interface RegisterRequest {
+  user_id: string;
+  password: string;
+  region?: string;
+}
+
+export interface RegisterResponse {
+  access_token: string;
+  token_type: string;
+  user_id: string;
+}
+
 export interface LoginRequest {
   user_id: string;
   password: string;
@@ -115,6 +127,15 @@ class ApiClient {
   }
 
   // --- Auth ---
+  async register(data: RegisterRequest): Promise<RegisterResponse> {
+    const resp = await this.request<RegisterResponse>("/api/identity/register", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    this.setToken(resp.access_token);
+    return resp;
+  }
+
   async login(data: LoginRequest): Promise<LoginResponse> {
     const resp = await this.request<LoginResponse>("/api/identity/login", {
       method: "POST",

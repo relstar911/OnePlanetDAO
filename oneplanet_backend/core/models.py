@@ -6,8 +6,9 @@ from .privacy import PrivacyClass, privacy_class
 @privacy_class(PrivacyClass.REDACTED)
 class User(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    user_id: str
-    region: str
+    user_id: str = Field(unique=True, index=True)
+    password_hash: str = ""
+    region: str = ""
 
 
 @privacy_class(PrivacyClass.PUBLIC)

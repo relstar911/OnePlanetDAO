@@ -1,11 +1,12 @@
+from typing import Literal
+
 from pydantic import BaseModel
-from typing import List, Literal
 
 
 class ProofRequest(BaseModel):
     user_id: str
     proof_type: Literal["onboarding", "recovery", "voting"]
-    public_signals: List[str]
+    public_signals: list[str]
     external_nullifier: str
 
 
@@ -25,6 +26,12 @@ class AppealResponse(BaseModel):
     case_id: str
 
 
+class RegisterRequest(BaseModel):
+    user_id: str
+    password: str
+    region: str = ""
+
+
 class LoginRequest(BaseModel):
     user_id: str
-    password: str = ""  # Für späteres echtes Login, aktuell Dummy
+    password: str
