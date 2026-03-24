@@ -12,7 +12,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import type { KPI, Alert, AnomalyLog, Vote as VoteType } from "@/lib/api";
+import type { KPI, Alert, AnomalyLog, Proposal, Vote as VoteType } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 
 function StatCard({
@@ -71,6 +71,7 @@ export default function DashboardPage() {
   const [kpis, setKPIs] = useState<KPI[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [anomalies, setAnomalies] = useState<AnomalyLog[]>([]);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [backendStatus, setBackendStatus] = useState<string>("checking...");
 
@@ -84,16 +85,18 @@ export default function DashboardPage() {
       }
 
       try {
-        const [v, k, al, an] = await Promise.allSettled([
+        const [v, k, al, an, pr] = await Promise.allSettled([
           api.getVotes(),
           api.getKPIs(),
           api.getAlerts(),
           api.getAnomalies(),
+          api.getProposals(),
         ]);
         if (v.status === "fulfilled") setVotes(v.value);
         if (k.status === "fulfilled") setKPIs(k.value);
         if (al.status === "fulfilled") setAlerts(al.value);
         if (an.status === "fulfilled") setAnomalies(an.value);
+        if (pr.status === "fulfilled") setProposals(pr.value);
       } catch {
         // partial data is fine
       }
@@ -229,6 +232,36 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Active Proposals */}
+      {proposals.length > 0 && (
+        <div className="glass rounded-xl p-5">
+          <h2 className="mb-4 flex items-center gap-2 font-semibold">
+            <BarChart3 className="h-4 w-4 text-cyan-400" />
+            Active Proposals ({proposals.length})
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {proposals.map((p) => {
+              const proposalVotes = votes.filter((v) => v.proposal_id === p.proposal_id);
+              return (
+                <div
+                  key={p.proposal_id}
+                  className="rounded-lg bg-white/2 p-4 space-y-2"
+                >
+                  <div className="font-medium text-sm text-zinc-200">{p.title}</div>
+                  {p.description && (
+                    <p className="text-xs text-zinc-500 line-clamp-2">{p.description}</p>
+                  )}
+                  <div className="flex items-center gap-3 text-xs text-zinc-400">
+                    <span>{proposalVotes.length} votes</span>
+                    <span>{new Set(proposalVotes.map((v) => v.user_id)).size} voters</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Votes */}
