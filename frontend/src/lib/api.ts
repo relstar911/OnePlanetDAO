@@ -66,6 +66,19 @@ export interface AnomalyLog {
   resolved: boolean;
 }
 
+export interface Proposal {
+  id: number;
+  proposal_id: string;
+  title: string;
+  description: string;
+}
+
+export interface ProposalCreate {
+  proposal_id: string;
+  title: string;
+  description?: string;
+}
+
 export interface ProofRequest {
   user_id: string;
   proof_type: string;
@@ -160,6 +173,18 @@ class ApiClient {
   async getVotes(params?: Record<string, string>): Promise<Vote[]> {
     const query = params ? "?" + new URLSearchParams(params).toString() : "";
     return this.request<Vote[]>(`/api/governance/votes${query}`);
+  }
+
+  // --- Proposals ---
+  async getProposals(): Promise<Proposal[]> {
+    return this.request<Proposal[]>("/api/governance/proposals");
+  }
+
+  async createProposal(data: ProposalCreate): Promise<Proposal> {
+    return this.request<Proposal>("/api/governance/proposals", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   }
 
   // --- Reporting ---

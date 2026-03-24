@@ -6,9 +6,9 @@ from sqlmodel import Session, select
 from ..core.auth import require_auth
 from ..core.db import get_session
 from ..core.limiter import limiter
-from ..core.models import PrivacyClass, Vote
+from ..core.models import PrivacyClass, Proposal, Vote
 from ..core.privacy import audit_log_access
-from ..schemas.governance import VoteRequest, VoteResponse
+from ..schemas.governance import ProposalCreate, ProposalResponse, VoteRequest, VoteResponse
 from ..services.quadratic_voting import validate_weights
 
 router = APIRouter()
@@ -82,4 +82,57 @@ def list_votes(session: Session = Depends(get_session)):  # noqa: B008
             proof=v.proof,
         )
         for v in votes
+    ]
+
+
+# --- Proposals ---
+
+
+@router.post("/proposals", response_model=ProposalResponse)
+@limiter.limit("10/minute")
+def create_proposal(
+    data: ProposalCreate,
+    request: Request,
+    session: Session = Depends(get_session),  # noqa: B008
+    user=Depends(require_auth),  # noqa: B008
+):
+    """Create a new proposal."""
+    if not data.proposal_id or not data.proposal_id.strip():
+        raise HTTPException(status_code=400, detail="proposal_id required")
+    if not data.title or not data.title.strip():
+        raise HTTPException(status_code=400, detail="title required")
+
+    existing = session.exec(
+        select(Proposal).where(Proposal.proposal_id == data.proposal_id)
+    ).first()
+    if existing:
+        raise HTTPException(status_code=409, detail="Proposal ID already exists")
+
+    db_proposal = Proposal(
+        proposal_id=data.proposal_id,
+        title=data.title,
+        description=data.description,
+    )
+    session.add(db_proposal)
+    session.commit()
+    session.refresh(db_proposal)
+    return ProposalResponse(
+        id=db_proposal.id,
+        proposal_id=db_proposal.proposal_id,
+        title=db_proposal.title,
+        description=db_proposal.description,
+    )
+
+
+@router.get("/proposals", response_model=list[ProposalResponse])
+def list_proposals(session: Session = Depends(get_session)):  # noqa: B008
+    proposals = session.exec(select(Proposal)).all()
+    return [
+        ProposalResponse(
+            id=p.id,
+            proposal_id=p.proposal_id,
+            title=p.title,
+            description=p.description,
+        )
+        for p in proposals
     ]

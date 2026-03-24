@@ -12,7 +12,7 @@ from ..core.anomaly import AnomalyLog
 from ..core.auth import hash_password
 from ..core.config import ENVIRONMENT
 from ..core.db import get_session
-from ..core.models import KPI, Alert, User, Vote
+from ..core.models import KPI, Alert, Proposal, User, Vote
 
 router = APIRouter()
 
@@ -110,6 +110,24 @@ DEMO_KPIS = [
     },
 ]
 
+DEMO_PROPOSALS = [
+    {
+        "proposal_id": "climate-fund-2026",
+        "title": "Global Climate Adaptation Fund 2026",
+        "description": "Allocate 15% of DAO treasury to climate adaptation projects in vulnerable regions.",
+    },
+    {
+        "proposal_id": "education-global",
+        "title": "Universal Education Access Initiative",
+        "description": "Fund open-source educational platforms for underserved communities worldwide.",
+    },
+    {
+        "proposal_id": "health-access-2026",
+        "title": "Health Infrastructure for All",
+        "description": "Invest in vaccine distribution networks and mobile health clinics in rural areas.",
+    },
+]
+
 DEMO_ALERTS = [
     {"epoch": 1, "msi": 0.15, "vei": 0.82, "collusion_flag": False, "status": "active"},
     {"epoch": 1, "msi": 0.67, "vei": 0.41, "collusion_flag": True, "status": "active"},
@@ -161,6 +179,10 @@ def seed_demo_data(session: Session = Depends(get_session)):  # noqa: B008
             )
         )
 
+    # Seed proposals
+    for p in DEMO_PROPOSALS:
+        session.add(Proposal(**p))
+
     # Seed votes (vote_weights must be JSON-encoded for the model)
     for v in DEMO_VOTES:
         vote_data = {**v, "vote_weights": json.dumps(v["vote_weights"])}
@@ -185,6 +207,7 @@ def seed_demo_data(session: Session = Depends(get_session)):  # noqa: B008
         "seeded": True,
         "counts": {
             "users": len(DEMO_USERS),
+            "proposals": len(DEMO_PROPOSALS),
             "votes": len(DEMO_VOTES),
             "kpis": len(DEMO_KPIS),
             "alerts": len(DEMO_ALERTS),
