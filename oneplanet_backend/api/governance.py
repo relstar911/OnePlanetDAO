@@ -1,13 +1,15 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlmodel import Session, select
+
 from ..core.auth import require_auth
 from ..core.db import get_session
-from ..schemas.governance import VoteRequest, VoteResponse
-from ..core.models import Vote, PrivacyClass
+from ..core.limiter import limiter
+from ..core.models import PrivacyClass, Vote
 from ..core.privacy import audit_log_access
-from oneplanet_backend.core.limiter import limiter
-import json
-from typing import List
+from ..schemas.governance import VoteRequest, VoteResponse
+from ..services.quadratic_voting import validate_weights
 
 router = APIRouter()
 
@@ -17,8 +19,8 @@ router = APIRouter()
 def submit_vote(
     vote: VoteRequest,
     request: Request,
-    session: Session = Depends(get_session),
-    user=Depends(require_auth),
+    session: Session = Depends(get_session),  # noqa: B008
+    user=Depends(require_auth),  # noqa: B008
 ):
     """
     Submit a quadratic vote (see System Blueprint/API Spec).
@@ -43,13 +45,12 @@ def submit_vote(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Alle Felder (user_id, proposal_id, vote_weights, proof) müssen gesetzt sein.",
         )
-    # Wertebereich-Validierung
-    if not isinstance(vote.vote_weights, dict) or any(
-        (not isinstance(v, (int, float)) or v < 0) for v in vote.vote_weights.values()
-    ):
+    # Wertebereich-Validierung via QV service
+    weight_errors = validate_weights(vote.vote_weights)
+    if weight_errors:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Alle vote_weights müssen >= 0 sein und als Dict übergeben werden.",
+            detail=weight_errors[0],
         )
     # Proof-Format-Validierung (hier: nicht leer, später ZK-Check)
     if not isinstance(vote.proof, str) or not vote.proof.strip():
@@ -70,8 +71,8 @@ def submit_vote(
     return VoteResponse(status="success", tx_hash=str(db_vote.id))
 
 
-@router.get("/votes", response_model=List[VoteRequest])
-def list_votes(session: Session = Depends(get_session)):
+@router.get("/votes", response_model=list[VoteRequest])
+def list_votes(session: Session = Depends(get_session)):  # noqa: B008
     votes = session.exec(select(Vote)).all()
     return [
         VoteRequest(

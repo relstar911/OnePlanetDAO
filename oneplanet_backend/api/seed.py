@@ -9,11 +9,22 @@ from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from ..core.anomaly import AnomalyLog
+from ..core.auth import hash_password
 from ..core.config import ENVIRONMENT
 from ..core.db import get_session
-from ..core.models import KPI, Alert, Vote
+from ..core.models import KPI, Alert, User, Vote
 
 router = APIRouter()
+
+DEMO_USERS = [
+    {"user_id": "alice", "password": "alice1234", "region": "Europe"},
+    {"user_id": "bob", "password": "bob1234", "region": "Europe"},
+    {"user_id": "carol", "password": "carol1234", "region": "East Africa"},
+    {"user_id": "david", "password": "david1234", "region": "South America"},
+    {"user_id": "eve", "password": "eve1234", "region": "Southeast Asia"},
+    {"user_id": "frank", "password": "frank1234", "region": "North America"},
+    {"user_id": "grace", "password": "grace1234", "region": "North America"},
+]
 
 
 DEMO_VOTES = [
@@ -136,9 +147,19 @@ def seed_demo_data(session: Session = Depends(get_session)):  # noqa: B008
         return {"detail": "Seed endpoint is disabled in production."}
 
     # Check if already seeded
-    existing = session.exec(select(Vote)).first()
+    existing = session.exec(select(User)).first()
     if existing:
         return {"detail": "Database already contains data. Skipping seed.", "seeded": False}
+
+    # Seed users with hashed passwords
+    for u in DEMO_USERS:
+        session.add(
+            User(
+                user_id=u["user_id"],
+                password_hash=hash_password(u["password"]),
+                region=u["region"],
+            )
+        )
 
     # Seed votes (vote_weights must be JSON-encoded for the model)
     for v in DEMO_VOTES:
@@ -163,6 +184,7 @@ def seed_demo_data(session: Session = Depends(get_session)):  # noqa: B008
         "detail": "Demo data seeded successfully.",
         "seeded": True,
         "counts": {
+            "users": len(DEMO_USERS),
             "votes": len(DEMO_VOTES),
             "kpis": len(DEMO_KPIS),
             "alerts": len(DEMO_ALERTS),

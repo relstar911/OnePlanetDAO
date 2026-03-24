@@ -195,7 +195,7 @@ def test_vote_negative_weights(auth_headers):
     }
     resp = client.post("/api/governance/vote", json=data, headers=auth_headers)
     assert resp.status_code == 422
-    assert "vote_weights" in resp.text
+    assert ">= 0" in resp.text
 
 
 def test_vote_empty_proof(auth_headers):
