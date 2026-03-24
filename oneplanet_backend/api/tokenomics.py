@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlmodel import Session, select
+
+from oneplanet_backend.core.limiter import limiter
+
 from ..core.auth import require_auth
 from ..core.db import get_session
-from ..schemas.tokenomics import AlertResponse
 from ..core.models import Alert, PrivacyClass
 from ..core.privacy import audit_log_access
-from oneplanet_backend.core.limiter import limiter
-from typing import List
+from ..schemas.tokenomics import AlertResponse
 
 router = APIRouter()
 
@@ -16,13 +17,13 @@ router = APIRouter()
 def create_alert(
     alert: AlertResponse,
     request: Request,
-    session: Session = Depends(get_session),
-    user=Depends(require_auth),
+    session: Session = Depends(get_session),  # noqa: B008
+    user=Depends(require_auth),  # noqa: B008
 ):
     """
     Alert-Validierung:
-    - Pflichtfelder: epoch, msi, vei, collusion, status, alert
-    - Wertebereiche: epoch >=0, msi/vei 0-1, collusion/status/alert nicht leer
+    - Pflichtfelder: epoch, msi, vei, collusion_flag, status
+    - Wertebereiche: epoch >=0, msi/vei 0-1, collusion_flag bool, status nicht leer
     """
     # Audit log: access to alert creation
     audit_log_access(
@@ -34,17 +35,10 @@ def create_alert(
         reason="Alert submitted",
         session=session,
     )
-    if (
-        alert.epoch is None
-        or alert.msi is None
-        or alert.vei is None
-        or not alert.collusion
-        or not alert.status
-        or not alert.alert
-    ):
+    if alert.epoch is None or alert.msi is None or alert.vei is None or not alert.status:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Alle Felder (epoch, msi, vei, collusion, status, alert) müssen gesetzt sein.",
+            detail="Alle Felder (epoch, msi, vei, collusion_flag, status) müssen gesetzt sein.",
         )
     if not isinstance(alert.epoch, int) or alert.epoch < 0:
         raise HTTPException(
@@ -60,20 +54,18 @@ def create_alert(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="vei muss zwischen 0 und 1 liegen.",
         )
-    for field in [alert.collusion, alert.status, alert.alert]:
-        if not isinstance(field, str) or not field.strip():
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="collusion, status und alert müssen nicht-leere Strings sein.",
-            )
+    if not isinstance(alert.status, str) or not alert.status.strip():
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="status muss ein nicht-leerer String sein.",
+        )
 
     db_alert = Alert(
         epoch=alert.epoch,
         msi=alert.msi,
         vei=alert.vei,
-        collusion=alert.collusion,
+        collusion_flag=alert.collusion_flag,
         status=alert.status,
-        alert=alert.alert,
     )
     session.add(db_alert)
     session.commit()
@@ -82,23 +74,21 @@ def create_alert(
         epoch=db_alert.epoch,
         msi=db_alert.msi,
         vei=db_alert.vei,
-        collusion=db_alert.collusion,
+        collusion_flag=db_alert.collusion_flag,
         status=db_alert.status,
-        alert=db_alert.alert,
     )
 
 
-@router.get("/alerts", response_model=List[AlertResponse])
-def list_alerts(session: Session = Depends(get_session)):
+@router.get("/alerts", response_model=list[AlertResponse])
+def list_alerts(session: Session = Depends(get_session)):  # noqa: B008
     alerts = session.exec(select(Alert)).all()
     return [
         AlertResponse(
             epoch=a.epoch,
             msi=a.msi,
             vei=a.vei,
-            collusion=a.collusion,
+            collusion_flag=a.collusion_flag,
             status=a.status,
-            alert=a.alert,
         )
         for a in alerts
     ]

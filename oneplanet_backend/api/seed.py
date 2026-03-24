@@ -3,6 +3,8 @@ Seed endpoint – populates the database with demo data for development and demo
 Only available when ENVIRONMENT != 'production'.
 """
 
+import json
+
 from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
@@ -18,43 +20,43 @@ DEMO_VOTES = [
     {
         "user_id": "alice",
         "proposal_id": "climate-fund-2026",
-        "vote_weights": [3, 1],
+        "vote_weights": {"climate": 3, "adaptation": 1},
         "proof": "zk-proof-alice",
     },
     {
         "user_id": "bob",
         "proposal_id": "climate-fund-2026",
-        "vote_weights": [2, 2],
+        "vote_weights": {"climate": 2, "adaptation": 2},
         "proof": "zk-proof-bob",
     },
     {
         "user_id": "carol",
         "proposal_id": "education-global",
-        "vote_weights": [1],
+        "vote_weights": {"access": 1},
         "proof": "zk-proof-carol",
     },
     {
         "user_id": "david",
         "proposal_id": "climate-fund-2026",
-        "vote_weights": [4],
+        "vote_weights": {"climate": 4},
         "proof": "zk-proof-david",
     },
     {
         "user_id": "eve",
         "proposal_id": "health-access-2026",
-        "vote_weights": [2, 3],
+        "vote_weights": {"vaccines": 2, "infrastructure": 3},
         "proof": "zk-proof-eve",
     },
     {
         "user_id": "frank",
         "proposal_id": "education-global",
-        "vote_weights": [1, 1, 1],
+        "vote_weights": {"access": 1, "teachers": 1, "materials": 1},
         "proof": "zk-proof-frank",
     },
     {
         "user_id": "grace",
         "proposal_id": "health-access-2026",
-        "vote_weights": [5],
+        "vote_weights": {"vaccines": 5},
         "proof": "zk-proof-grace",
     },
 ]
@@ -138,9 +140,10 @@ def seed_demo_data(session: Session = Depends(get_session)):  # noqa: B008
     if existing:
         return {"detail": "Database already contains data. Skipping seed.", "seeded": False}
 
-    # Seed votes
+    # Seed votes (vote_weights must be JSON-encoded for the model)
     for v in DEMO_VOTES:
-        session.add(Vote(**v))
+        vote_data = {**v, "vote_weights": json.dumps(v["vote_weights"])}
+        session.add(Vote(**vote_data))
 
     # Seed KPIs
     for k in DEMO_KPIS:

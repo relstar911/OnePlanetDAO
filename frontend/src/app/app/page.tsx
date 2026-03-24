@@ -244,7 +244,7 @@ export default function DashboardPage() {
               {votes.slice(-5).reverse().map((v) => (
                 <div
                   key={v.id}
-                  className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded-lg bg-white/2 px-3 py-2 text-sm"
                 >
                   <div className="flex items-center gap-2">
                     <Users className="h-3 w-3 text-zinc-500" />
@@ -253,7 +253,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-zinc-500">Proposal {v.proposal_id}</span>
                     <span className="text-xs text-cyan-400">
-                      [{v.vote_weights.join(", ")}]
+                      [{Object.entries(v.vote_weights).map(([k, val]) => `${k}:${val}`).join(", ")}]
                     </span>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function DashboardPage() {
               {anomalies.slice(-5).reverse().map((a) => (
                 <div
                   key={a.id}
-                  className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded-lg bg-white/2 px-3 py-2 text-sm"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-zinc-300">{a.type}</span>
@@ -303,7 +303,7 @@ export default function DashboardPage() {
               {kpis.slice(-5).reverse().map((k) => (
                 <div
                   key={k.id}
-                  className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded-lg bg-white/2 px-3 py-2 text-sm"
                 >
                   <div className="flex items-center gap-2">
                     <Globe className="h-3 w-3 text-zinc-500" />
@@ -338,7 +338,7 @@ export default function DashboardPage() {
               {alerts.slice(-5).reverse().map((a) => (
                 <div
                   key={a.id}
-                  className="flex items-center justify-between rounded-lg bg-white/[0.02] px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded-lg bg-white/2 px-3 py-2 text-sm"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-zinc-300">Epoch {a.epoch}</span>

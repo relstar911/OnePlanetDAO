@@ -13,7 +13,7 @@ export interface LoginResponse {
 export interface VoteRequest {
   user_id: string;
   proposal_id: string;
-  vote_weights: number[];
+  vote_weights: Record<string, number>;
   proof: string;
 }
 
@@ -21,7 +21,7 @@ export interface Vote {
   id: number;
   user_id: string;
   proposal_id: string;
-  vote_weights: number[];
+  vote_weights: Record<string, number>;
   proof: string;
 }
 
@@ -42,6 +42,7 @@ export interface Alert {
   collusion_flag: boolean;
   status: string;
 }
+
 
 export interface AnomalyLog {
   id: number;

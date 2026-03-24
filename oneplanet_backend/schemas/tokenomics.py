@@ -5,6 +5,5 @@ class AlertResponse(BaseModel):
     epoch: int
     msi: float
     vei: float
-    collusion: str
+    collusion_flag: bool = False
     status: str
-    alert: str

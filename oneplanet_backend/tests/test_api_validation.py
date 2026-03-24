@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
-from oneplanet_backend.main import app
-from oneplanet_backend.core.db import engine
 from sqlmodel import SQLModel
+
+from oneplanet_backend.core.db import engine
+from oneplanet_backend.main import app
 
 
 @pytest.fixture(autouse=True)
@@ -383,10 +384,10 @@ def test_proof_request_empty_signals(auth_headers):
 def test_kpi_success(auth_headers):
     data = {
         "region": "EU",
-        "onRampSuccess": 2,
-        "accessibilityScore": 0.7,
-        "privacyShieldOptIn": 1,
-        "empowermentKPI": 5,
+        "epoch": 1,
+        "participation_rate": 72.5,
+        "accessibility_score": 88.0,
+        "trust_index": 0.91,
     }
     resp = client.post("/api/reporting/kpis", json=data)
     assert resp.status_code == 200
@@ -403,10 +404,10 @@ def test_kpi_get_empty(auth_headers):
 def test_kpi_get_after_post(auth_headers):
     data = {
         "region": "ASIA",
-        "onRampSuccess": 3,
-        "accessibilityScore": 0.8,
-        "privacyShieldOptIn": 2,
-        "empowermentKPI": 7,
+        "epoch": 1,
+        "participation_rate": 65.0,
+        "accessibility_score": 80.0,
+        "trust_index": 0.85,
     }
     post_resp = client.post("/api/reporting/kpis", json=data)
     assert post_resp.status_code == 200
@@ -422,10 +423,10 @@ def test_kpi_get_filter_region(auth_headers):
         "/api/reporting/kpis",
         json={
             "region": "EU",
-            "onRampSuccess": 1,
-            "accessibilityScore": 0.5,
-            "privacyShieldOptIn": 1,
-            "empowermentKPI": 2,
+            "epoch": 1,
+            "participation_rate": 50.0,
+            "accessibility_score": 70.0,
+            "trust_index": 0.80,
         },
     )
     resp = client.get("/api/reporting/kpis?region=EU")
@@ -439,10 +440,10 @@ def test_kpi_get_filter_region_not_found(auth_headers):
         "/api/reporting/kpis",
         json={
             "region": "AFRICA",
-            "onRampSuccess": 2,
-            "accessibilityScore": 0.6,
-            "privacyShieldOptIn": 1,
-            "empowermentKPI": 3,
+            "epoch": 1,
+            "participation_rate": 40.0,
+            "accessibility_score": 60.0,
+            "trust_index": 0.75,
         },
     )
     resp = client.get("/api/reporting/kpis?region=OCEANIA")
@@ -455,10 +456,10 @@ def test_kpi_get_filter_region_case_insensitive(auth_headers):
         "/api/reporting/kpis",
         json={
             "region": "Asia",
-            "onRampSuccess": 2,
-            "accessibilityScore": 0.7,
-            "privacyShieldOptIn": 1,
-            "empowermentKPI": 4,
+            "epoch": 1,
+            "participation_rate": 55.0,
+            "accessibility_score": 70.0,
+            "trust_index": 0.82,
         },
     )
     resp = client.get("/api/reporting/kpis?region=asia")
@@ -492,14 +493,14 @@ def test_kpi_get_filter_unsupported(auth_headers):
 def test_kpi_invalid_accessibility(auth_headers):
     data = {
         "region": "EU",
-        "onRampSuccess": 1,
-        "accessibilityScore": 2.0,
-        "privacyShieldOptIn": 1,
-        "empowermentKPI": 2,
+        "epoch": 1,
+        "participation_rate": 50.0,
+        "accessibility_score": 200.0,
+        "trust_index": 0.5,
     }
     resp = client.post("/api/reporting/kpis", json=data, headers=auth_headers)
     assert resp.status_code == 422
-    assert "accessibilityScore" in resp.text
+    assert "accessibility_score" in resp.text
 
 
 # --- Alert Success Test ---
@@ -508,9 +509,8 @@ def test_alert_success(auth_headers):
         "epoch": 1,
         "msi": 0.5,
         "vei": 0.5,
-        "collusion": "none",
+        "collusion_flag": False,
         "status": "ok",
-        "alert": "test alert",
     }
     resp = client.post("/api/tokenomics/alerts", json=data, headers=auth_headers)
     assert resp.status_code == 200
@@ -531,9 +531,8 @@ def test_alert_get_filter_epoch(auth_headers):
             "epoch": 101,
             "msi": 0.5,
             "vei": 0.5,
-            "collusion": "none",
+            "collusion_flag": False,
             "status": "ok",
-            "alert": "epoch101",
         },
         headers=auth_headers,
     )
@@ -557,9 +556,8 @@ def test_alert_get_filter_status_case(auth_headers):
             "epoch": 202,
             "msi": 0.7,
             "vei": 0.8,
-            "collusion": "minor",
+            "collusion_flag": True,
             "status": "Warning",
-            "alert": "caseTest",
         },
     )
     resp = client.get("/api/tokenomics/alerts?status=warning")
@@ -576,9 +574,8 @@ def test_alert_get_filter_msi_edge(auth_headers):
             "epoch": 303,
             "msi": 1.0,
             "vei": 0.1,
-            "collusion": "high",
+            "collusion_flag": True,
             "status": "danger",
-            "alert": "msi1",
         },
     )
     resp = client.get("/api/tokenomics/alerts?msi=1.0")
@@ -612,9 +609,8 @@ def test_alert_get_after_post(auth_headers):
         "epoch": 2,
         "msi": 0.7,
         "vei": 0.6,
-        "collusion": "minor",
+        "collusion_flag": False,
         "status": "warning",
-        "alert": "alert 2",
     }
     post_resp = client.post("/api/tokenomics/alerts", json=data, headers=auth_headers)
     assert post_resp.status_code == 200
@@ -632,9 +628,8 @@ def test_alert_get_multiple(auth_headers):
             "epoch": 10,
             "msi": 0.1,
             "vei": 0.2,
-            "collusion": "none",
+            "collusion_flag": False,
             "status": "ok",
-            "alert": "first",
         },
         headers=auth_headers,
     )
@@ -644,9 +639,8 @@ def test_alert_get_multiple(auth_headers):
             "epoch": 11,
             "msi": 0.3,
             "vei": 0.4,
-            "collusion": "low",
+            "collusion_flag": True,
             "status": "info",
-            "alert": "second",
         },
         headers=auth_headers,
     )
@@ -665,9 +659,8 @@ def test_alert_get_fields(auth_headers):
         "epoch": 3,
         "msi": 0.9,
         "vei": 0.8,
-        "collusion": "critical",
+        "collusion_flag": True,
         "status": "danger",
-        "alert": "all fields",
     }
     post_resp = client.post("/api/tokenomics/alerts", json=data, headers=auth_headers)
     print("POST status (alert fields):", post_resp.status_code, post_resp.text)
@@ -675,7 +668,7 @@ def test_alert_get_fields(auth_headers):
     print("GET status (alert fields):", resp.status_code, resp.text)
     assert resp.status_code == 200
     alert = resp.json()[0]
-    for key in ["epoch", "msi", "vei", "collusion", "status", "alert"]:
+    for key in ["epoch", "msi", "vei", "collusion_flag", "status"]:
         assert key in alert
 
 
@@ -685,9 +678,8 @@ def test_alert_invalid_msi(auth_headers):
         "epoch": 1,
         "msi": 1.5,
         "vei": 0.5,
-        "collusion": "none",
+        "collusion_flag": False,
         "status": "ok",
-        "alert": "test",
     }
     resp = client.post("/api/tokenomics/alerts", json=data, headers=auth_headers)
     assert resp.status_code == 422

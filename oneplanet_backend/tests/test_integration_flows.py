@@ -1,8 +1,10 @@
-from fastapi.testclient import TestClient
-from oneplanet_backend.main import app
-from oneplanet_backend.core.limiter import limiter
 import random
 import string
+
+from fastapi.testclient import TestClient
+
+from oneplanet_backend.core.limiter import limiter
+from oneplanet_backend.main import app
 
 limiter.enabled = False
 
@@ -37,10 +39,10 @@ def test_full_onboarding_to_voting_flow():
     # Step 2: Submit KPI for region
     kpi_data = {
         "region": "INTREGION",
-        "onRampSuccess": 1,
-        "accessibilityScore": 0.9,
-        "privacyShieldOptIn": 1,
-        "empowermentKPI": 3,
+        "epoch": 1,
+        "participation_rate": 70.0,
+        "accessibility_score": 90.0,
+        "trust_index": 0.88,
     }
     kpi_resp = client.post("/api/reporting/kpis", json=kpi_data, headers=auth_headers)
     assert kpi_resp.status_code == 200
@@ -49,9 +51,8 @@ def test_full_onboarding_to_voting_flow():
         "epoch": 99,
         "msi": 0.95,
         "vei": 0.85,
-        "collusion": "none",
+        "collusion_flag": False,
         "status": "ok",
-        "alert": "integration test",
     }
     alert_resp = client.post("/api/tokenomics/alerts", json=alert_data, headers=auth_headers)
     assert alert_resp.status_code == 200
@@ -139,9 +140,8 @@ def test_alert_with_edge_msi_vei():
             "epoch": 777,
             "msi": msi,
             "vei": vei,
-            "collusion": "none",
+            "collusion_flag": False,
             "status": "ok",
-            "alert": f"edge msi={msi} vei={vei}",
         }
         resp = client.post("/api/tokenomics/alerts", json=data, headers=auth_headers)
         assert resp.status_code == 200

@@ -86,7 +86,7 @@ export default function IdentityPage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="flex gap-3 rounded-lg bg-white/[0.02] p-3"
+                className="flex gap-3 rounded-lg bg-white/2 p-3"
               >
                 <item.icon className="h-5 w-5 text-cyan-400 mt-0.5 shrink-0" />
                 <div>

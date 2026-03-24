@@ -13,7 +13,7 @@ export default function VotingPage() {
 
   // Form state
   const [proposalId, setProposalId] = useState("");
-  const [weights, setWeights] = useState("1");
+  const [weights, setWeights] = useState("climate:1");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -26,6 +26,18 @@ export default function VotingPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Parse "choice:weight, choice:weight" into Record<string, number>
+  const parseWeights = (input: string): Record<string, number> | null => {
+    const result: Record<string, number> = {};
+    const parts = input.split(",").map((p) => p.trim()).filter(Boolean);
+    for (const part of parts) {
+      const [key, val] = part.split(":").map((s) => s.trim());
+      if (!key || isNaN(Number(val))) return null;
+      result[key] = Number(val);
+    }
+    return Object.keys(result).length > 0 ? result : null;
+  };
+
   const handleVote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLoggedIn || !userId) {
@@ -37,13 +49,10 @@ export default function VotingPage() {
     setSubmitting(true);
 
     try {
-      const voteWeights = weights
-        .split(",")
-        .map((w) => parseFloat(w.trim()))
-        .filter((w) => !isNaN(w));
+      const voteWeights = parseWeights(weights);
 
-      if (voteWeights.length === 0) {
-        setError("Enter at least one vote weight (e.g. 1,2,3)");
+      if (!voteWeights) {
+        setError("Enter weights as choice:value pairs (e.g. climate:3, adaptation:1)");
         setSubmitting(false);
         return;
       }
@@ -57,7 +66,7 @@ export default function VotingPage() {
 
       setSuccess("Vote submitted successfully!");
       setProposalId("");
-      setWeights("1");
+      setWeights("climate:1");
 
       const updated = await api.getVotes();
       setVotes(updated);
@@ -69,11 +78,10 @@ export default function VotingPage() {
   };
 
   // Quadratic cost calculation
-  const totalCost = weights
-    .split(",")
-    .map((w) => parseFloat(w.trim()))
-    .filter((w) => !isNaN(w))
-    .reduce((sum, w) => sum + w * w, 0);
+  const parsedWeights = parseWeights(weights);
+  const totalCost = parsedWeights
+    ? Object.values(parsedWeights).reduce((sum, w) => sum + w * w, 0)
+    : 0;
 
   return (
     <div className="space-y-8">
@@ -138,11 +146,11 @@ export default function VotingPage() {
                 value={weights}
                 onChange={(e) => setWeights(e.target.value)}
                 required
-                placeholder="e.g. 1,2,3"
+                placeholder="e.g. climate:3, adaptation:1"
                 className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25"
               />
               <p className="mt-1.5 text-xs text-zinc-500">
-                Comma-separated. Each weight represents your preference strength.
+                Format: choice:weight pairs, comma-separated. Each weight represents your preference strength.
               </p>
             </div>
 
@@ -188,7 +196,7 @@ export default function VotingPage() {
                 {[...votes].reverse().map((v) => (
                   <div
                     key={v.id}
-                    className="rounded-lg bg-white/[0.02] px-4 py-3 text-sm"
+                    className="rounded-lg bg-white/2 px-4 py-3 text-sm"
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-zinc-300">
@@ -198,18 +206,18 @@ export default function VotingPage() {
                         Proposal: {v.proposal_id}
                       </span>
                     </div>
-                    <div className="mt-1 flex items-center gap-2">
+                    <div className="mt-1 flex items-center gap-2 flex-wrap">
                       <span className="text-xs text-zinc-500">Weights:</span>
-                      {v.vote_weights.map((w, i) => (
+                      {Object.entries(v.vote_weights).map(([choice, w]) => (
                         <span
-                          key={i}
+                          key={choice}
                           className="rounded bg-cyan-500/10 px-1.5 py-0.5 text-xs text-cyan-400"
                         >
-                          {w}
+                          {choice}:{w}
                         </span>
                       ))}
                       <span className="ml-auto text-xs text-zinc-500">
-                        Cost: {v.vote_weights.reduce((s, w) => s + w * w, 0)}
+                        Cost: {Object.values(v.vote_weights).reduce((s: number, w: number) => s + w * w, 0)}
                       </span>
                     </div>
                   </div>

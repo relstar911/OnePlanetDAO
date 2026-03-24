@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class KPIResponse(BaseModel):
     region: str
-    onRampSuccess: int
-    accessibilityScore: float
-    privacyShieldOptIn: int
-    empowermentKPI: int
+    epoch: int = 1
+    participation_rate: float = 0.0
+    accessibility_score: float = 0.0
+    trust_index: float = 0.0
